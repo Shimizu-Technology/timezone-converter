@@ -124,27 +124,35 @@ export const TIMEZONE_GROUPS: TimezoneGroup[] = [
     timezones: [
       {
         value: 'America/New_York',
-        label: 'New York',
+        label: 'New York (Eastern)',
         offset: getTimezoneOffset('America/New_York'),
-        searchTerms: ['eastern', 'est', 'edt', 'us', 'usa', 'miami', 'washington', 'boston', 'atlanta']
+        searchTerms: ['eastern', 'est', 'edt', 'us', 'usa', 'new york', 'nyc', 'manhattan', 'brooklyn',
+                      'boston', 'philadelphia', 'philly', 'washington', 'dc', 'miami', 'atlanta', 'detroit',
+                      'baltimore', 'charlotte', 'pittsburgh', 'cleveland', 'buffalo', 'hartford', 'ct',
+                      'connecticut', 'orlando', 'tampa', 'jacksonville', 'richmond', 'raleigh', 'columbus']
       },
       {
         value: 'America/Chicago',
-        label: 'Chicago',
+        label: 'Chicago (Central)',
         offset: getTimezoneOffset('America/Chicago'),
-        searchTerms: ['central', 'cst', 'cdt', 'us', 'usa', 'dallas', 'houston', 'austin']
+        searchTerms: ['central', 'cst', 'cdt', 'us', 'usa', 'chicago', 'dallas', 'houston', 'austin',
+                      'san antonio', 'memphis', 'nashville', 'milwaukee', 'minneapolis', 'st louis',
+                      'kansas city', 'oklahoma city', 'new orleans', 'indianapolis', 'louisville']
       },
       {
         value: 'America/Denver',
-        label: 'Denver',
+        label: 'Denver (Mountain)',
         offset: getTimezoneOffset('America/Denver'),
-        searchTerms: ['mountain', 'mst', 'mdt', 'us', 'usa', 'salt lake city']
+        searchTerms: ['mountain', 'mst', 'mdt', 'us', 'usa', 'denver', 'salt lake city', 'slc', 'utah',
+                      'boulder', 'colorado springs', 'albuquerque', 'boise', 'billings']
       },
       {
         value: 'America/Los_Angeles',
-        label: 'Los Angeles',
+        label: 'Los Angeles (Pacific)',
         offset: getTimezoneOffset('America/Los_Angeles'),
-        searchTerms: ['pacific', 'pst', 'pdt', 'california', 'us', 'usa', 'san francisco', 'seattle', 'portland']
+        searchTerms: ['pacific', 'pst', 'pdt', 'california', 'us', 'usa', 'los angeles', 'la', 'hollywood',
+                      'san francisco', 'sf', 'oakland', 'san diego', 'san jose', 'sacramento', 'fresno',
+                      'seattle', 'portland', 'oregon', 'washington', 'las vegas', 'reno', 'spokane']
       },
       {
         value: 'America/Phoenix',
@@ -168,13 +176,15 @@ export const TIMEZONE_GROUPS: TimezoneGroup[] = [
         value: 'America/Toronto',
         label: 'Toronto',
         offset: getTimezoneOffset('America/Toronto'),
-        searchTerms: ['canada', 'eastern', 'est', 'edt', 'ontario', 'montreal', 'ottawa']
+        searchTerms: ['canada', 'eastern', 'est', 'edt', 'ontario', 'toronto', 'montreal', 'ottawa',
+                      'quebec', 'mississauga', 'hamilton', 'london ontario', 'kingston', 'windsor']
       },
       {
         value: 'America/Vancouver',
         label: 'Vancouver',
         offset: getTimezoneOffset('America/Vancouver'),
-        searchTerms: ['canada', 'pacific', 'pst', 'pdt', 'british columbia']
+        searchTerms: ['canada', 'pacific', 'pst', 'pdt', 'british columbia', 'bc', 'vancouver',
+                      'victoria', 'kelowna', 'surrey', 'burnaby']
       },
       {
         value: 'America/Edmonton',
@@ -317,19 +327,22 @@ export const TIMEZONE_GROUPS: TimezoneGroup[] = [
         value: 'Europe/London',
         label: 'London',
         offset: getTimezoneOffset('Europe/London'),
-        searchTerms: ['uk', 'britain', 'gmt', 'bst']
+        searchTerms: ['uk', 'britain', 'england', 'gmt', 'bst', 'london', 'manchester', 'birmingham',
+                      'liverpool', 'edinburgh', 'scotland', 'glasgow', 'cardiff', 'wales', 'belfast']
       },
       {
         value: 'Europe/Paris',
         label: 'Paris',
         offset: getTimezoneOffset('Europe/Paris'),
-        searchTerms: ['france', 'cet', 'cest']
+        searchTerms: ['france', 'cet', 'cest', 'paris', 'marseille', 'lyon', 'toulouse', 'nice',
+                      'nantes', 'strasbourg', 'montpellier', 'bordeaux']
       },
       {
         value: 'Europe/Berlin',
         label: 'Berlin',
         offset: getTimezoneOffset('Europe/Berlin'),
-        searchTerms: ['germany', 'cet', 'cest']
+        searchTerms: ['germany', 'cet', 'cest', 'berlin', 'munich', 'hamburg', 'frankfurt',
+                      'cologne', 'stuttgart', 'dusseldorf', 'dortmund']
       },
       {
         value: 'Europe/Madrid',

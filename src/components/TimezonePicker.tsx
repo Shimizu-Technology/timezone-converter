@@ -40,10 +40,15 @@ export default function TimezonePicker({ onClose }: TimezonePickerProps) {
         <div className="relative">
           <Combobox.Input
             className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-            placeholder="Search timezones (e.g., Tokyo, EST, GMT+5)..."
+            placeholder="Search timezones (e.g., Hartford, Tokyo, EST)..."
             onChange={(event) => setQuery(event.target.value)}
             autoFocus
           />
+          {query && filteredTimezones.length > 0 && (
+            <div className="absolute right-3 top-3 text-xs text-gray-500">
+              {filteredTimezones.length} found
+            </div>
+          )}
 
           <Transition
             as={Fragment}

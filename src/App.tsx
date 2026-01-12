@@ -131,8 +131,14 @@ function App() {
 
         {/* Timezone picker modal */}
         {showPicker && (
-          <div className="fixed inset-0 bg-black bg-opacity-25 z-40 flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl shadow-xl p-6">
+          <div
+            className="fixed inset-0 bg-black bg-opacity-25 z-40 flex items-center justify-center p-4"
+            onClick={() => setShowPicker(false)}
+          >
+            <div
+              className="bg-white rounded-xl shadow-xl p-6"
+              onClick={(e) => e.stopPropagation()}
+            >
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 Add Timezone
               </h2>
@@ -148,9 +154,12 @@ function App() {
         />
 
         {/* Footer */}
-        <div className="mt-8 text-center text-sm text-gray-500">
+        <div className="mt-8 text-center text-sm text-gray-500 space-y-1">
           <p>
-            Built with React, TypeScript, and Luxon
+            Built in Guam 🌴 with React, TypeScript, and Luxon
+          </p>
+          <p className="text-xs">
+            Accurate DST handling • 100+ timezones • Open source
           </p>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { ConvertedTime } from '../types/timezone.types';
 import clsx from 'clsx';
+import { useState, useEffect } from 'react';
 
 interface TimezoneCardProps {
   convertedTime: ConvertedTime;
@@ -13,14 +14,20 @@ export default function TimezoneCard({
   isCurrent = false
 }: TimezoneCardProps) {
   const { timezoneInfo, time, date, isDifferentDay } = convertedTime;
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
 
   return (
     <div
       className={clsx(
-        'relative p-4 rounded-lg border transition-all',
+        'relative p-4 rounded-lg border transition-all duration-300 ease-out',
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2',
         isCurrent
-          ? 'bg-blue-50 border-blue-300'
-          : 'bg-white border-gray-200 hover:border-gray-300'
+          ? 'bg-blue-50 border-blue-300 shadow-sm'
+          : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-md'
       )}
     >
       {/* Remove button */}
