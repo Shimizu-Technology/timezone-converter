@@ -18,10 +18,28 @@ function getTimezoneOffset(tz: string): string {
  */
 export const POPULAR_TIMEZONES: TimezoneData[] = [
   {
+    value: 'Pacific/Guam',
+    label: 'Guam',
+    offset: getTimezoneOffset('Pacific/Guam'),
+    searchTerms: ['chst', 'chamorro']
+  },
+  {
     value: 'America/New_York',
     label: 'New York',
     offset: getTimezoneOffset('America/New_York'),
     searchTerms: ['eastern', 'est', 'edt', 'us', 'usa']
+  },
+  {
+    value: 'America/Chicago',
+    label: 'Chicago',
+    offset: getTimezoneOffset('America/Chicago'),
+    searchTerms: ['central', 'cst', 'cdt', 'us', 'usa']
+  },
+  {
+    value: 'America/Denver',
+    label: 'Denver',
+    offset: getTimezoneOffset('America/Denver'),
+    searchTerms: ['mountain', 'mst', 'mdt', 'us', 'usa']
   },
   {
     value: 'America/Los_Angeles',
@@ -30,10 +48,16 @@ export const POPULAR_TIMEZONES: TimezoneData[] = [
     searchTerms: ['pacific', 'pst', 'pdt', 'california', 'us', 'usa']
   },
   {
-    value: 'America/Chicago',
-    label: 'Chicago',
-    offset: getTimezoneOffset('America/Chicago'),
-    searchTerms: ['central', 'cst', 'cdt', 'us', 'usa']
+    value: 'Pacific/Honolulu',
+    label: 'Honolulu',
+    offset: getTimezoneOffset('Pacific/Honolulu'),
+    searchTerms: ['hawaii', 'hst', 'us', 'usa']
+  },
+  {
+    value: 'America/Anchorage',
+    label: 'Anchorage',
+    offset: getTimezoneOffset('America/Anchorage'),
+    searchTerms: ['alaska', 'akst', 'akdt', 'us', 'usa']
   },
   {
     value: 'Europe/London',
@@ -45,13 +69,25 @@ export const POPULAR_TIMEZONES: TimezoneData[] = [
     value: 'Europe/Paris',
     label: 'Paris',
     offset: getTimezoneOffset('Europe/Paris'),
-    searchTerms: ['cet', 'cest', 'france']
+    searchTerms: ['cet', 'cest', 'france', 'berlin', 'madrid', 'rome']
   },
   {
-    value: 'Asia/Tokyo',
-    label: 'Tokyo',
-    offset: getTimezoneOffset('Asia/Tokyo'),
-    searchTerms: ['jst', 'japan']
+    value: 'Asia/Dubai',
+    label: 'Dubai',
+    offset: getTimezoneOffset('Asia/Dubai'),
+    searchTerms: ['uae', 'emirates', 'gst']
+  },
+  {
+    value: 'Asia/Kolkata',
+    label: 'India',
+    offset: getTimezoneOffset('Asia/Kolkata'),
+    searchTerms: ['mumbai', 'delhi', 'ist', 'india']
+  },
+  {
+    value: 'Asia/Singapore',
+    label: 'Singapore',
+    offset: getTimezoneOffset('Asia/Singapore'),
+    searchTerms: ['sgt']
   },
   {
     value: 'Asia/Shanghai',
@@ -60,10 +96,22 @@ export const POPULAR_TIMEZONES: TimezoneData[] = [
     searchTerms: ['china', 'beijing', 'cst']
   },
   {
+    value: 'Asia/Tokyo',
+    label: 'Tokyo',
+    offset: getTimezoneOffset('Asia/Tokyo'),
+    searchTerms: ['jst', 'japan']
+  },
+  {
     value: 'Australia/Sydney',
     label: 'Sydney',
     offset: getTimezoneOffset('Australia/Sydney'),
     searchTerms: ['aest', 'aedt', 'australia']
+  },
+  {
+    value: 'Pacific/Auckland',
+    label: 'Auckland',
+    offset: getTimezoneOffset('Pacific/Auckland'),
+    searchTerms: ['new zealand', 'nzst', 'nzdt']
   }
 ];
 
@@ -78,25 +126,25 @@ export const TIMEZONE_GROUPS: TimezoneGroup[] = [
         value: 'America/New_York',
         label: 'New York',
         offset: getTimezoneOffset('America/New_York'),
-        searchTerms: ['eastern', 'est', 'edt', 'us', 'usa']
+        searchTerms: ['eastern', 'est', 'edt', 'us', 'usa', 'miami', 'washington', 'boston', 'atlanta']
       },
       {
         value: 'America/Chicago',
         label: 'Chicago',
         offset: getTimezoneOffset('America/Chicago'),
-        searchTerms: ['central', 'cst', 'cdt', 'us', 'usa']
+        searchTerms: ['central', 'cst', 'cdt', 'us', 'usa', 'dallas', 'houston', 'austin']
       },
       {
         value: 'America/Denver',
         label: 'Denver',
         offset: getTimezoneOffset('America/Denver'),
-        searchTerms: ['mountain', 'mst', 'mdt', 'us', 'usa']
+        searchTerms: ['mountain', 'mst', 'mdt', 'us', 'usa', 'salt lake city']
       },
       {
         value: 'America/Los_Angeles',
         label: 'Los Angeles',
         offset: getTimezoneOffset('America/Los_Angeles'),
-        searchTerms: ['pacific', 'pst', 'pdt', 'california', 'us', 'usa']
+        searchTerms: ['pacific', 'pst', 'pdt', 'california', 'us', 'usa', 'san francisco', 'seattle', 'portland']
       },
       {
         value: 'America/Phoenix',
@@ -120,13 +168,67 @@ export const TIMEZONE_GROUPS: TimezoneGroup[] = [
         value: 'America/Toronto',
         label: 'Toronto',
         offset: getTimezoneOffset('America/Toronto'),
-        searchTerms: ['canada', 'eastern', 'est', 'edt']
+        searchTerms: ['canada', 'eastern', 'est', 'edt', 'ontario', 'montreal', 'ottawa']
       },
       {
         value: 'America/Vancouver',
         label: 'Vancouver',
         offset: getTimezoneOffset('America/Vancouver'),
-        searchTerms: ['canada', 'pacific', 'pst', 'pdt']
+        searchTerms: ['canada', 'pacific', 'pst', 'pdt', 'british columbia']
+      },
+      {
+        value: 'America/Edmonton',
+        label: 'Edmonton',
+        offset: getTimezoneOffset('America/Edmonton'),
+        searchTerms: ['canada', 'mountain', 'mst', 'mdt', 'alberta', 'calgary']
+      },
+      {
+        value: 'America/Halifax',
+        label: 'Halifax',
+        offset: getTimezoneOffset('America/Halifax'),
+        searchTerms: ['canada', 'atlantic', 'ast', 'adt', 'nova scotia']
+      },
+      {
+        value: 'America/Puerto_Rico',
+        label: 'Puerto Rico',
+        offset: getTimezoneOffset('America/Puerto_Rico'),
+        searchTerms: ['ast', 'caribbean', 'us']
+      },
+      {
+        value: 'America/Jamaica',
+        label: 'Jamaica',
+        offset: getTimezoneOffset('America/Jamaica'),
+        searchTerms: ['est', 'caribbean', 'kingston']
+      },
+      {
+        value: 'America/Havana',
+        label: 'Havana',
+        offset: getTimezoneOffset('America/Havana'),
+        searchTerms: ['cuba', 'cst', 'cdt']
+      },
+      {
+        value: 'America/Santo_Domingo',
+        label: 'Santo Domingo',
+        offset: getTimezoneOffset('America/Santo_Domingo'),
+        searchTerms: ['dominican republic', 'ast']
+      },
+      {
+        value: 'America/Panama',
+        label: 'Panama',
+        offset: getTimezoneOffset('America/Panama'),
+        searchTerms: ['est']
+      },
+      {
+        value: 'America/Costa_Rica',
+        label: 'Costa Rica',
+        offset: getTimezoneOffset('America/Costa_Rica'),
+        searchTerms: ['cst', 'san jose']
+      },
+      {
+        value: 'America/Guatemala',
+        label: 'Guatemala',
+        offset: getTimezoneOffset('America/Guatemala'),
+        searchTerms: ['cst']
       },
       {
         value: 'America/Mexico_City',
@@ -135,16 +237,22 @@ export const TIMEZONE_GROUPS: TimezoneGroup[] = [
         searchTerms: ['mexico', 'cst', 'cdt']
       },
       {
-        value: 'America/Sao_Paulo',
-        label: 'São Paulo',
-        offset: getTimezoneOffset('America/Sao_Paulo'),
-        searchTerms: ['brazil', 'brt', 'brst']
+        value: 'America/Cancun',
+        label: 'Cancún',
+        offset: getTimezoneOffset('America/Cancun'),
+        searchTerms: ['mexico', 'est']
       },
       {
-        value: 'America/Argentina/Buenos_Aires',
-        label: 'Buenos Aires',
-        offset: getTimezoneOffset('America/Argentina/Buenos_Aires'),
-        searchTerms: ['argentina', 'art']
+        value: 'America/Caracas',
+        label: 'Caracas',
+        offset: getTimezoneOffset('America/Caracas'),
+        searchTerms: ['venezuela', 'vet']
+      },
+      {
+        value: 'America/Bogota',
+        label: 'Bogotá',
+        offset: getTimezoneOffset('America/Bogota'),
+        searchTerms: ['colombia', 'cot']
       },
       {
         value: 'America/Lima',
@@ -153,10 +261,52 @@ export const TIMEZONE_GROUPS: TimezoneGroup[] = [
         searchTerms: ['peru', 'pet']
       },
       {
-        value: 'America/Bogota',
-        label: 'Bogotá',
-        offset: getTimezoneOffset('America/Bogota'),
-        searchTerms: ['colombia', 'cot']
+        value: 'America/Guayaquil',
+        label: 'Quito',
+        offset: getTimezoneOffset('America/Guayaquil'),
+        searchTerms: ['ecuador', 'ect']
+      },
+      {
+        value: 'America/La_Paz',
+        label: 'La Paz',
+        offset: getTimezoneOffset('America/La_Paz'),
+        searchTerms: ['bolivia', 'bot']
+      },
+      {
+        value: 'America/Santiago',
+        label: 'Santiago',
+        offset: getTimezoneOffset('America/Santiago'),
+        searchTerms: ['chile', 'clst', 'clt']
+      },
+      {
+        value: 'America/Asuncion',
+        label: 'Asunción',
+        offset: getTimezoneOffset('America/Asuncion'),
+        searchTerms: ['paraguay', 'pyt']
+      },
+      {
+        value: 'America/Montevideo',
+        label: 'Montevideo',
+        offset: getTimezoneOffset('America/Montevideo'),
+        searchTerms: ['uruguay', 'uyt']
+      },
+      {
+        value: 'America/Sao_Paulo',
+        label: 'São Paulo',
+        offset: getTimezoneOffset('America/Sao_Paulo'),
+        searchTerms: ['brazil', 'brt', 'brst', 'rio de janeiro']
+      },
+      {
+        value: 'America/Manaus',
+        label: 'Manaus',
+        offset: getTimezoneOffset('America/Manaus'),
+        searchTerms: ['brazil', 'amt']
+      },
+      {
+        value: 'America/Argentina/Buenos_Aires',
+        label: 'Buenos Aires',
+        offset: getTimezoneOffset('America/Argentina/Buenos_Aires'),
+        searchTerms: ['argentina', 'art']
       }
     ]
   },
@@ -384,6 +534,42 @@ export const TIMEZONE_GROUPS: TimezoneGroup[] = [
     region: 'Pacific',
     timezones: [
       {
+        value: 'Pacific/Guam',
+        label: 'Guam',
+        offset: getTimezoneOffset('Pacific/Guam'),
+        searchTerms: ['chst', 'chamorro']
+      },
+      {
+        value: 'Pacific/Saipan',
+        label: 'Saipan',
+        offset: getTimezoneOffset('Pacific/Saipan'),
+        searchTerms: ['northern mariana', 'cnmi', 'chst']
+      },
+      {
+        value: 'Pacific/Palau',
+        label: 'Palau',
+        offset: getTimezoneOffset('Pacific/Palau'),
+        searchTerms: ['pwt']
+      },
+      {
+        value: 'Pacific/Majuro',
+        label: 'Majuro',
+        offset: getTimezoneOffset('Pacific/Majuro'),
+        searchTerms: ['marshall islands', 'mht']
+      },
+      {
+        value: 'Pacific/Pohnpei',
+        label: 'Pohnpei',
+        offset: getTimezoneOffset('Pacific/Pohnpei'),
+        searchTerms: ['micronesia', 'pni', 'pont']
+      },
+      {
+        value: 'Pacific/Chuuk',
+        label: 'Chuuk',
+        offset: getTimezoneOffset('Pacific/Chuuk'),
+        searchTerms: ['micronesia', 'truk', 'chut']
+      },
+      {
         value: 'Australia/Sydney',
         label: 'Sydney',
         offset: getTimezoneOffset('Australia/Sydney'),
@@ -408,6 +594,12 @@ export const TIMEZONE_GROUPS: TimezoneGroup[] = [
         searchTerms: ['australia', 'awst']
       },
       {
+        value: 'Australia/Adelaide',
+        label: 'Adelaide',
+        offset: getTimezoneOffset('Australia/Adelaide'),
+        searchTerms: ['australia', 'acst', 'acdt']
+      },
+      {
         value: 'Pacific/Auckland',
         label: 'Auckland',
         offset: getTimezoneOffset('Pacific/Auckland'),
@@ -420,10 +612,22 @@ export const TIMEZONE_GROUPS: TimezoneGroup[] = [
         searchTerms: ['fjt']
       },
       {
-        value: 'Pacific/Guam',
-        label: 'Guam',
-        offset: getTimezoneOffset('Pacific/Guam'),
-        searchTerms: ['chst']
+        value: 'Pacific/Tongatapu',
+        label: 'Tonga',
+        offset: getTimezoneOffset('Pacific/Tongatapu'),
+        searchTerms: ['tot']
+      },
+      {
+        value: 'Pacific/Apia',
+        label: 'Samoa',
+        offset: getTimezoneOffset('Pacific/Apia'),
+        searchTerms: ['wst']
+      },
+      {
+        value: 'Pacific/Tahiti',
+        label: 'Tahiti',
+        offset: getTimezoneOffset('Pacific/Tahiti'),
+        searchTerms: ['french polynesia', 'taht']
       },
       {
         value: 'Pacific/Port_Moresby',

@@ -1,8 +1,8 @@
-# Timezone Converter
+# Hafa Timezones
 
-A modern, clean timezone converter built with React, TypeScript, and Luxon. Convert time across multiple timezones instantly with saved timezone sets for quick access.
+A modern, clean timezone converter built with React, TypeScript, and Luxon. Born in Guam, designed for the world. Convert time across multiple timezones instantly with saved timezone sets for quick access.
 
-![Timezone Converter](https://via.placeholder.com/800x400?text=Timezone+Converter+Screenshot)
+![Hafa Timezones](https://via.placeholder.com/800x400?text=Hafa+Timezones)
 
 ## Features
 
@@ -35,8 +35,8 @@ A modern, clean timezone converter built with React, TypeScript, and Luxon. Conv
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/timezone-converter.git
-cd timezone-converter
+git clone https://github.com/yourusername/hafa-timezones.git
+cd hafa-timezones
 ```
 
 2. Install dependencies:
@@ -65,7 +65,7 @@ npm run dev
 ### Project Structure
 
 ```
-timezone-converter/
+hafa-timezones/
 ├── src/
 │   ├── components/          # React components
 │   │   ├── TimezoneCard.tsx
@@ -217,4 +217,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 Your Name - [@yourtwitter](https://twitter.com/yourtwitter)
 
-Project Link: [https://github.com/yourusername/timezone-converter](https://github.com/yourusername/timezone-converter)
+Project Link: [https://github.com/yourusername/hafa-timezones](https://github.com/yourusername/hafa-timezones)

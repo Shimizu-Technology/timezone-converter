@@ -34,7 +34,7 @@ function App() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Timezone Converter
+            Hafa Timezones
           </h1>
           <p className="text-gray-600">
             Convert time across timezones instantly

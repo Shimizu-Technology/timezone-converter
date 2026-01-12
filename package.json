@@ -1,8 +1,9 @@
 {
-  "name": "timezone-converter",
+  "name": "hafa-timezones",
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "description": "Convert time across timezones instantly - built in Guam with Chamorro spirit",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
