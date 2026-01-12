@@ -34,6 +34,16 @@ export default function TimezoneInput() {
     setSourceTimezone(e.target.value);
   };
 
+  const handleSetNow = () => {
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    setTimeInput(timeString);
+    setSourceTime(timeString);
+    setError(null);
+  };
+
   return (
     <div className="space-y-2">
       <label className="block text-sm font-medium text-gray-700">
@@ -43,14 +53,23 @@ export default function TimezoneInput() {
       <div className="flex flex-col sm:flex-row gap-3">
         {/* Time input */}
         <div className="flex-1">
-          <input
-            type="text"
-            value={timeInput}
-            onChange={handleTimeChange}
-            placeholder="e.g., 3pm, 15:00, now"
-            className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-            aria-label="Time"
-          />
+          <div className="relative">
+            <input
+              type="text"
+              value={timeInput}
+              onChange={handleTimeChange}
+              placeholder="e.g., 3pm, 15:00, now"
+              className="w-full px-4 py-3 pr-20 text-lg bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+              aria-label="Time"
+              autoComplete="off"
+            />
+            <button
+              onClick={handleSetNow}
+              className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors"
+            >
+              Now
+            </button>
+          </div>
           {error && (
             <p className="mt-1 text-xs text-red-600">{error}</p>
           )}

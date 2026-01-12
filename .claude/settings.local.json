@@ -7,7 +7,10 @@
       "Bash(npm install:*)",
       "Bash(npx tailwindcss:*)",
       "Bash(npm test:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nFix autofill styling and add ''Now'' button\n\n- Fix dark input background caused by browser autofill\n- Add explicit bg-white and text-gray-900 to input\n- Override webkit autofill styles in CSS\n- Force light color scheme\n- Add ''Now'' button inside time input to set current time\n- Position button absolutely on right side of input\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
     ]
   }
 }
