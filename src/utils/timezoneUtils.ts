@@ -192,12 +192,18 @@ export function convertToMultipleTimezones(
 export function getCurrentTimeInTimezone(timezone: string): ConvertedTime {
   const now = DateTime.now().setZone(timezone);
 
+  // Check if business hours (9am-5pm in target timezone)
+  const hour = now.hour;
+  const isBusinessHours = hour >= 9 && hour < 17;
+
   return {
     timezoneInfo: getTimezoneInfo(timezone),
     time: now.toFormat('h:mm a'),
     date: now.toFormat('EEE, MMM d, yyyy'),
     isDifferentDay: false,
-    iso: now.toISO() || ''
+    iso: now.toISO() || '',
+    hoursDifference: 0, // No conversion, so difference is 0
+    isBusinessHours
   };
 }
 

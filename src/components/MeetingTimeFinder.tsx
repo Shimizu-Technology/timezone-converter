@@ -75,7 +75,7 @@ export default function MeetingTimeFinder({
     const windows: { start: number; end: number }[] = [];
     let currentWindow: { start: number; end: number } | null = null;
 
-    overlappingHours.forEach((slot, index) => {
+    overlappingHours.forEach((slot) => {
       if (slot.isOverlapping) {
         if (currentWindow === null) {
           currentWindow = { start: slot.hour, end: slot.hour };
