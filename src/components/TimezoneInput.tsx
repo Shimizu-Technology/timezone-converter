@@ -4,29 +4,59 @@ import { POPULAR_TIMEZONES } from '../utils/timezoneData';
 import { parseTime } from '../utils/timezoneUtils';
 
 export default function TimezoneInput() {
-  const { sourceTime, sourceTimezone, setSourceTime, setSourceTimezone } = useTimezoneStore();
+  const { sourceTime, sourceTimezone, setSourceTime, setSourceTimezone, useMilitaryTime } = useTimezoneStore();
   const [timeInput, setTimeInput] = useState(sourceTime);
   const [error, setError] = useState<string | null>(null);
 
-  // Update local input when store changes
+  // Format time for display based on military time setting
+  const formatTimeForDisplay = (time24: string): string => {
+    const [hours, minutes] = time24.split(':').map(Number);
+
+    if (useMilitaryTime) {
+      return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    } else {
+      // Convert to 12hr format
+      const period = hours >= 12 ? 'PM' : 'AM';
+      const hours12 = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
+      return `${hours12}:${minutes.toString().padStart(2, '0')} ${period}`;
+    }
+  };
+
+  // Update local input when store changes or military time toggle changes
   useEffect(() => {
-    setTimeInput(sourceTime);
-  }, [sourceTime]);
+    setTimeInput(formatTimeForDisplay(sourceTime));
+  }, [sourceTime, useMilitaryTime]);
 
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setTimeInput(value);
     setError(null);
 
-    try {
-      // Validate time format
-      const { time } = parseTime(value);
-      setSourceTime(time);
-    } catch (err) {
-      // Show error but don't prevent typing
-      if (value.length > 2) {
-        setError(err instanceof Error ? err.message : 'Invalid time format');
+    // Only try to parse if there's enough content
+    if (value.length > 0) {
+      try {
+        // Validate time format
+        const { time } = parseTime(value);
+        setSourceTime(time);
+        // Don't reformat while typing - only on blur
+      } catch (err) {
+        // Show error but don't prevent typing
+        if (value.length > 2) {
+          setError(err instanceof Error ? err.message : 'Invalid time format');
+        }
       }
+    }
+  };
+
+  const handleTimeBlur = () => {
+    // Reformat to standard format on blur
+    try {
+      const { time } = parseTime(timeInput);
+      setSourceTime(time);
+      setTimeInput(formatTimeForDisplay(time));
+      setError(null);
+    } catch (err) {
+      // Keep showing error
     }
   };
 
@@ -39,18 +69,55 @@ export default function TimezoneInput() {
     const hours = now.getHours();
     const minutes = now.getMinutes();
     const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-    setTimeInput(timeString);
     setSourceTime(timeString);
+    setTimeInput(formatTimeForDisplay(timeString));
+    setError(null);
+  };
+
+  const handleQuickTime = (timeStr: string) => {
+    setSourceTime(timeStr);
+    setTimeInput(formatTimeForDisplay(timeStr));
     setError(null);
   };
 
   return (
-    <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-700">
-        What time is it in...
-      </label>
+    <div className="space-y-3">
+      <div className="flex items-center gap-2">
+        <div className="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center">
+          <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <label className="text-base font-bold text-gray-900">
+          What time is it in...
+        </label>
+      </div>
 
-      <div className="flex flex-col sm:flex-row gap-3">
+      {/* Quick Guam time buttons */}
+      {sourceTimezone === 'Pacific/Guam' && (
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          <button
+            onClick={() => handleQuickTime('08:00')}
+            className="px-3 py-2 text-xs font-semibold text-cyan-700 bg-cyan-50 hover:bg-cyan-100 rounded-lg transition-all shadow-sm border border-cyan-200 whitespace-nowrap"
+          >
+            Start of Day (8am)
+          </button>
+          <button
+            onClick={() => handleQuickTime('12:00')}
+            className="px-3 py-2 text-xs font-semibold text-cyan-700 bg-cyan-50 hover:bg-cyan-100 rounded-lg transition-all shadow-sm border border-cyan-200 whitespace-nowrap"
+          >
+            Lunch (12pm)
+          </button>
+          <button
+            onClick={() => handleQuickTime('17:00')}
+            className="px-3 py-2 text-xs font-semibold text-cyan-700 bg-cyan-50 hover:bg-cyan-100 rounded-lg transition-all shadow-sm border border-cyan-200 whitespace-nowrap"
+          >
+            End of Day (5pm)
+          </button>
+        </div>
+      )}
+
+      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
         {/* Time input */}
         <div className="flex-1">
           <div className="relative">
@@ -58,14 +125,15 @@ export default function TimezoneInput() {
               type="text"
               value={timeInput}
               onChange={handleTimeChange}
+              onBlur={handleTimeBlur}
               placeholder="e.g., 3pm, 15:00, now"
-              className="w-full px-4 py-3 pr-20 text-lg bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+              className="w-full h-12 px-4 pr-20 text-lg font-semibold bg-white text-gray-900 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none transition-all shadow-sm"
               aria-label="Time"
               autoComplete="off"
             />
             <button
               onClick={handleSetNow}
-              className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors"
+              className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1.5 text-sm font-bold text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition-all shadow-sm"
             >
               Now
             </button>
@@ -80,7 +148,7 @@ export default function TimezoneInput() {
           <select
             value={sourceTimezone}
             onChange={handleTimezoneChange}
-            className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-white cursor-pointer"
+            className="w-full h-12 px-4 text-lg font-semibold border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none transition-all bg-white cursor-pointer shadow-sm"
             aria-label="Source timezone"
           >
             <optgroup label="Popular">

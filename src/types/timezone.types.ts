@@ -40,6 +40,8 @@ export interface ConvertedTime {
   date: string;                  // Full date (e.g., "Wed, Jan 12, 2026")
   isDifferentDay: boolean;       // True if date changed during conversion
   iso: string;                   // ISO 8601 string for the converted time
+  hoursDifference: number;       // Hours difference from source (e.g., -5, +14)
+  isBusinessHours: boolean;      // True if time is during business hours (9am-5pm)
 }
 
 /**

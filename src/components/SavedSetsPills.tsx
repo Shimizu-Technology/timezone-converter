@@ -54,17 +54,21 @@ export default function SavedSetsPills({ onNewSet }: SavedSetsPillsProps) {
 
       <div className="flex flex-wrap gap-2">
         {savedSets.map((set) => (
-          <button
+          <div
             key={set.id}
-            onClick={() => handleLoadSet(set.id)}
             className="group relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-full hover:bg-gray-50 hover:border-gray-400 transition-all"
             onMouseEnter={() => setDeletingSetId(set.id)}
             onMouseLeave={() => setDeletingSetId(null)}
           >
-            <span className="mr-2">{set.name}</span>
-            <span className="text-xs text-gray-500">
-              ({set.timezones.length})
-            </span>
+            <button
+              onClick={() => handleLoadSet(set.id)}
+              className="flex items-center"
+            >
+              <span className="mr-2">{set.name}</span>
+              <span className="text-xs text-gray-500">
+                ({set.timezones.length})
+              </span>
+            </button>
 
             {/* Delete button (appears on hover) */}
             <button
@@ -87,7 +91,7 @@ export default function SavedSetsPills({ onNewSet }: SavedSetsPillsProps) {
                 />
               </svg>
             </button>
-          </button>
+          </div>
         ))}
 
         {/* New set button */}

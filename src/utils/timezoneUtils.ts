@@ -107,13 +107,21 @@ export function parseTime(input: string): {
 }
 
 /**
+ * Format time based on military time preference
+ */
+export function formatTime(dateTime: any, useMilitaryTime: boolean = false): string {
+  return useMilitaryTime ? dateTime.toFormat('HH:mm') : dateTime.toFormat('h:mm a');
+}
+
+/**
  * Convert a time from one timezone to another
  */
 export function convertTime(
   sourceTime: string,
   sourceTimezone: string,
   targetTimezone: string,
-  sourceDate?: string // Optional: specific date in ISO format
+  sourceDate?: string, // Optional: specific date in ISO format
+  useMilitaryTime: boolean = false
 ): ConvertedTime {
   try {
     // Parse the source time
@@ -141,12 +149,23 @@ export function convertTime(
                            sourceDateTime.month !== targetDateTime.month ||
                            sourceDateTime.year !== targetDateTime.year;
 
+    // Calculate hours difference
+    const sourceOffset = sourceDateTime.offset;
+    const targetOffset = targetDateTime.offset;
+    const hoursDifference = (targetOffset - sourceOffset) / 60;
+
+    // Check if business hours (9am-5pm in target timezone)
+    const targetHour = targetDateTime.hour;
+    const isBusinessHours = targetHour >= 9 && targetHour < 17;
+
     return {
       timezoneInfo: getTimezoneInfo(targetTimezone),
-      time: targetDateTime.toFormat('h:mm a'),
+      time: formatTime(targetDateTime, useMilitaryTime),
       date: targetDateTime.toFormat('EEE, MMM d, yyyy'),
       isDifferentDay,
-      iso: targetDateTime.toISO() || ''
+      iso: targetDateTime.toISO() || '',
+      hoursDifference,
+      isBusinessHours
     };
   } catch (error) {
     throw new Error(`Conversion failed: ${error instanceof Error ? error.message : 'Unknown error'}`);

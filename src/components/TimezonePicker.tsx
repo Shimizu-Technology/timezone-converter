@@ -39,7 +39,7 @@ export default function TimezonePicker({ onClose }: TimezonePickerProps) {
       <Combobox onChange={handleSelect}>
         <div className="relative">
           <Combobox.Input
-            className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+            className="w-full px-4 py-3 text-base font-medium border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none transition-all shadow-sm"
             placeholder="Search timezones (e.g., Hartford, Tokyo, EST)..."
             onChange={(event) => setQuery(event.target.value)}
             autoFocus
@@ -56,7 +56,7 @@ export default function TimezonePicker({ onClose }: TimezonePickerProps) {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Combobox.Options className="absolute z-10 mt-2 w-full max-h-96 overflow-auto rounded-lg bg-white shadow-lg border border-gray-200 py-1">
+            <Combobox.Options className="absolute z-10 mt-2 w-full max-h-96 overflow-auto rounded-xl bg-white shadow-xl border-2 border-gray-100 py-1">
               {query === '' && groupedTimezones.length > 0 && (
                 <div className="px-4 py-2 text-xs font-medium text-gray-500">
                   Type to search timezones...
@@ -93,7 +93,7 @@ export default function TimezonePicker({ onClose }: TimezonePickerProps) {
       {/* Cancel button */}
       <button
         onClick={onClose}
-        className="mt-3 w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+        className="mt-3 w-full px-4 py-2.5 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm"
       >
         Cancel
       </button>

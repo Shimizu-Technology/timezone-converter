@@ -47,7 +47,7 @@ export default function SaveSetModal({ isOpen, onClose }: SaveSetModalProps) {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black bg-opacity-25" />
+          <div className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm" />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -61,13 +61,20 @@ export default function SaveSetModal({ isOpen, onClose }: SaveSetModalProps) {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 shadow-xl transition-all">
-                <Dialog.Title
-                  as="h3"
-                  className="text-lg font-semibold text-gray-900 mb-4"
-                >
-                  Save Timezone Set
-                </Dialog.Title>
+              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 shadow-2xl border border-gray-100 transition-all">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center">
+                    <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                    </svg>
+                  </div>
+                  <Dialog.Title
+                    as="h3"
+                    className="text-xl font-bold text-gray-900"
+                  >
+                    Save Timezone Set
+                  </Dialog.Title>
+                </div>
 
                 <div className="space-y-4">
                   {/* Set name input */}
@@ -87,7 +94,7 @@ export default function SaveSetModal({ isOpen, onClose }: SaveSetModalProps) {
                         setError('');
                       }}
                       placeholder="e.g., Work Team, Family"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                      className="w-full px-4 py-2.5 text-base font-medium border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-400 focus:border-amber-400 outline-none transition-all shadow-sm"
                       autoFocus
                     />
                     {error && (
@@ -124,13 +131,13 @@ export default function SaveSetModal({ isOpen, onClose }: SaveSetModalProps) {
                   <div className="flex gap-3 pt-2">
                     <button
                       onClick={handleClose}
-                      className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                      className="flex-1 px-4 py-2.5 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={handleSave}
-                      className="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                      className="flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-amber-500 hover:bg-amber-600 rounded-xl transition-all shadow-md hover:shadow-lg"
                     >
                       Save Set
                     </button>

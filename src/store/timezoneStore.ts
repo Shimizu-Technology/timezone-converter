@@ -11,6 +11,9 @@ interface TimezoneState {
   // Saved sets
   savedSets: TimezoneSet[];
 
+  // UI preferences
+  useMilitaryTime: boolean;
+
   // Actions for source time/timezone
   setSourceTime: (time: string) => void;
   setSourceTimezone: (timezone: string) => void;
@@ -26,14 +29,26 @@ interface TimezoneState {
   loadSet: (setId: string) => void;
   deleteSet: (setId: string) => void;
   renameSet: (setId: string, newName: string) => void;
+
+  // Actions for UI preferences
+  toggleMilitaryTime: () => void;
 }
+
+// Get current time as default
+const getCurrentTime = () => {
+  const now = new Date();
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+};
 
 // Initial state
 const initialState = {
-  sourceTime: '12:00',
+  sourceTime: getCurrentTime(),
   sourceTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/New_York',
   activeTimezones: [],
-  savedSets: []
+  savedSets: [],
+  useMilitaryTime: false
 };
 
 export const useTimezoneStore = create<TimezoneState>()(
@@ -117,6 +132,12 @@ export const useTimezoneStore = create<TimezoneState>()(
           savedSets: state.savedSets.map((set) =>
             set.id === setId ? { ...set, name: newName } : set
           )
+        })),
+
+      // Toggle military time (24hr) format
+      toggleMilitaryTime: () =>
+        set((state) => ({
+          useMilitaryTime: !state.useMilitaryTime
         }))
     }),
     {
@@ -127,7 +148,8 @@ export const useTimezoneStore = create<TimezoneState>()(
         sourceTime: state.sourceTime,
         sourceTimezone: state.sourceTimezone,
         activeTimezones: state.activeTimezones,
-        savedSets: state.savedSets
+        savedSets: state.savedSets,
+        useMilitaryTime: state.useMilitaryTime
       })
     }
   )
