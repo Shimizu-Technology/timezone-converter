@@ -11,7 +11,7 @@ import SaveSetModal from './components/SaveSetModal';
 import MeetingTimeFinder from './components/MeetingTimeFinder';
 
 function App() {
-  const { sourceTime, sourceTimezone, activeTimezones, removeTimezone, useMilitaryTime, toggleMilitaryTime, setSourceTime, setSourceTimezone, addTimezone, setActiveTimezones, savedSets } = useTimezoneStore();
+  const { sourceTime, sourceTimezone, sourceDate, activeTimezones, removeTimezone, useMilitaryTime, toggleMilitaryTime, setSourceTime, setSourceTimezone, setSourceDate, addTimezone, setActiveTimezones, savedSets } = useTimezoneStore();
   const [showPicker, setShowPicker] = useState(false);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showMeetingFinder, setShowMeetingFinder] = useState(false);
@@ -30,6 +30,10 @@ function App() {
       setSourceTimezone(urlState.sourceTimezone);
     }
 
+    if (urlState.sourceDate) {
+      setSourceDate(urlState.sourceDate);
+    }
+
     if (urlState.timezones.length > 0) {
       urlState.timezones.forEach(tz => {
         addTimezone(getTimezoneInfo(tz));
@@ -39,7 +43,7 @@ function App() {
 
   // Handle share/copy URL
   const handleCopyUrl = async () => {
-    const url = encodeStateToUrl(sourceTime, sourceTimezone, activeTimezones);
+    const url = encodeStateToUrl(sourceTime, sourceTimezone, activeTimezones, sourceDate);
     const success = await copyToClipboard(url);
 
     if (success) {
@@ -107,13 +111,13 @@ function App() {
 
     try {
       return activeTimezones.map((tz) =>
-        convertTime(sourceTime, sourceTimezone, tz.timezone, undefined, useMilitaryTime)
+        convertTime(sourceTime, sourceTimezone, tz.timezone, sourceDate || undefined, useMilitaryTime)
       );
     } catch (error) {
       console.error('Conversion error:', error);
       return [];
     }
-  }, [sourceTime, sourceTimezone, activeTimezones, useMilitaryTime]);
+  }, [sourceTime, sourceTimezone, sourceDate, activeTimezones, useMilitaryTime]);
 
   return (
     <div className="min-h-screen bg-slate-50">

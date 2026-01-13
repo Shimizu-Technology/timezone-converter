@@ -6,12 +6,18 @@ import { TimezoneInfo } from '../types/timezone.types';
 export function encodeStateToUrl(
   sourceTime: string,
   sourceTimezone: string,
-  activeTimezones: TimezoneInfo[]
+  activeTimezones: TimezoneInfo[],
+  sourceDate?: string | null
 ): string {
   const params = new URLSearchParams();
 
   params.set('t', sourceTime);
   params.set('tz', sourceTimezone);
+
+  // Add date if not "today"
+  if (sourceDate) {
+    params.set('d', sourceDate);
+  }
 
   // Encode only timezone identifiers (not full TimezoneInfo objects)
   if (activeTimezones.length > 0) {
@@ -29,6 +35,7 @@ export function encodeStateToUrl(
 export function decodeStateFromUrl(): {
   sourceTime: string | null;
   sourceTimezone: string | null;
+  sourceDate: string | null;
   timezones: string[];
 } {
   const params = new URLSearchParams(window.location.search);
@@ -36,6 +43,7 @@ export function decodeStateFromUrl(): {
   return {
     sourceTime: params.get('t'),
     sourceTimezone: params.get('tz'),
+    sourceDate: params.get('d'),
     timezones: params.get('zones')?.split(',').filter(Boolean) || []
   };
 }

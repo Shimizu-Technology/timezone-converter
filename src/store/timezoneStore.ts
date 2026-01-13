@@ -6,6 +6,7 @@ interface TimezoneState {
   // Current conversion state
   sourceTime: string;
   sourceTimezone: string;
+  sourceDate: string | null; // ISO date string or null for "today"
   activeTimezones: TimezoneInfo[];
 
   // Saved sets
@@ -17,6 +18,7 @@ interface TimezoneState {
   // Actions for source time/timezone
   setSourceTime: (time: string) => void;
   setSourceTimezone: (timezone: string) => void;
+  setSourceDate: (date: string | null) => void;
 
   // Actions for active timezones
   addTimezone: (timezone: TimezoneInfo) => void;
@@ -46,6 +48,7 @@ const getCurrentTime = () => {
 const initialState = {
   sourceTime: getCurrentTime(),
   sourceTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/New_York',
+  sourceDate: null, // null means "today"
   activeTimezones: [],
   savedSets: [],
   useMilitaryTime: false
@@ -63,6 +66,10 @@ export const useTimezoneStore = create<TimezoneState>()(
       // Set source timezone
       setSourceTimezone: (timezone: string) =>
         set({ sourceTimezone: timezone }),
+
+      // Set source date
+      setSourceDate: (date: string | null) =>
+        set({ sourceDate: date }),
 
       // Add a new timezone to active timezones
       addTimezone: (timezone: TimezoneInfo) =>
@@ -147,6 +154,7 @@ export const useTimezoneStore = create<TimezoneState>()(
       partialize: (state) => ({
         sourceTime: state.sourceTime,
         sourceTimezone: state.sourceTimezone,
+        sourceDate: state.sourceDate,
         activeTimezones: state.activeTimezones,
         savedSets: state.savedSets,
         useMilitaryTime: state.useMilitaryTime

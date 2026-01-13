@@ -1,12 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTimezoneStore } from '../store/timezoneStore';
 import { POPULAR_TIMEZONES } from '../utils/timezoneData';
 import { parseTime } from '../utils/timezoneUtils';
+import DateSelector from './DateSelector';
 
 export default function TimezoneInput() {
   const { sourceTime, sourceTimezone, setSourceTime, setSourceTimezone, useMilitaryTime } = useTimezoneStore();
   const [timeInput, setTimeInput] = useState(sourceTime);
   const [error, setError] = useState<string | null>(null);
+  const debounceTimerRef = useRef<number | null>(null);
+  const isUserTypingRef = useRef(false);
 
   // Format time for display based on military time setting
   const formatTimeForDisplay = (time24: string): string => {
@@ -23,32 +26,51 @@ export default function TimezoneInput() {
   };
 
   // Update local input when store changes or military time toggle changes
+  // But only if the user is not actively typing
   useEffect(() => {
-    setTimeInput(formatTimeForDisplay(sourceTime));
+    if (!isUserTypingRef.current) {
+      setTimeInput(formatTimeForDisplay(sourceTime));
+    }
   }, [sourceTime, useMilitaryTime]);
 
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+    isUserTypingRef.current = true;
     setTimeInput(value);
     setError(null);
 
-    // Only try to parse if there's enough content
+    // Clear any existing debounce timer
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    // Only try to parse after user stops typing for 800ms
     if (value.length > 0) {
-      try {
-        // Validate time format
-        const { time } = parseTime(value);
-        setSourceTime(time);
-        // Don't reformat while typing - only on blur
-      } catch (err) {
-        // Show error but don't prevent typing
-        if (value.length > 2) {
-          setError(err instanceof Error ? err.message : 'Invalid time format');
+      debounceTimerRef.current = setTimeout(() => {
+        try {
+          const { time } = parseTime(value);
+          setSourceTime(time);
+          isUserTypingRef.current = false;
+        } catch (err) {
+          // Show error if input looks complete
+          if (value.length > 2) {
+            setError(err instanceof Error ? err.message : 'Invalid time format');
+          }
+          isUserTypingRef.current = false;
         }
-      }
+      }, 800);
+    } else {
+      isUserTypingRef.current = false;
     }
   };
 
   const handleTimeBlur = () => {
+    // Clear debounce timer and parse immediately on blur
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    isUserTypingRef.current = false;
+
     // Reformat to standard format on blur
     try {
       const { time } = parseTime(timeInput);
@@ -65,6 +87,11 @@ export default function TimezoneInput() {
   };
 
   const handleSetNow = () => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    isUserTypingRef.current = false;
+
     const now = new Date();
     const hours = now.getHours();
     const minutes = now.getMinutes();
@@ -75,6 +102,11 @@ export default function TimezoneInput() {
   };
 
   const handleQuickTime = (timeStr: string) => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    isUserTypingRef.current = false;
+
     setSourceTime(timeStr);
     setTimeInput(formatTimeForDisplay(timeStr));
     setError(null);
@@ -117,9 +149,9 @@ export default function TimezoneInput() {
         </div>
       )}
 
-      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
         {/* Time input */}
-        <div className="flex-1">
+        <div className="sm:col-span-1">
           <div className="relative">
             <input
               type="text"
@@ -143,8 +175,13 @@ export default function TimezoneInput() {
           )}
         </div>
 
+        {/* Date selector */}
+        <div className="sm:col-span-1">
+          <DateSelector />
+        </div>
+
         {/* Timezone selector */}
-        <div className="sm:w-64">
+        <div className="sm:col-span-1">
           <select
             value={sourceTimezone}
             onChange={handleTimezoneChange}
