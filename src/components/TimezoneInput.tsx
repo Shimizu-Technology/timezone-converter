@@ -3,13 +3,16 @@ import { useTimezoneStore } from '../store/timezoneStore';
 import { POPULAR_TIMEZONES } from '../utils/timezoneData';
 import { parseTime } from '../utils/timezoneUtils';
 import DateSelector from './DateSelector';
+import TimePicker from './TimePicker';
 
 export default function TimezoneInput() {
   const { sourceTime, sourceTimezone, setSourceTime, setSourceTimezone, useMilitaryTime } = useTimezoneStore();
   const [timeInput, setTimeInput] = useState(sourceTime);
   const [error, setError] = useState<string | null>(null);
+  const [showTimePicker, setShowTimePicker] = useState(false);
   const debounceTimerRef = useRef<number | null>(null);
   const isUserTypingRef = useRef(false);
+  const inputContainerRef = useRef<HTMLDivElement>(null);
 
   // Format time for display based on military time setting
   const formatTimeForDisplay = (time24: string): string => {
@@ -105,6 +108,17 @@ export default function TimezoneInput() {
     setError(null);
   };
 
+  const handleTimePickerChange = (time: string) => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    isUserTypingRef.current = false;
+    
+    setSourceTime(time);
+    setTimeInput(formatTimeForDisplay(time));
+    setError(null);
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
@@ -118,53 +132,82 @@ export default function TimezoneInput() {
         </label>
       </div>
 
-      {/* Quick time buttons - shown for Guam timezone */}
-      {sourceTimezone === 'Pacific/Guam' && (
-        <div className="grid grid-cols-3 gap-2">
-          <button
-            onClick={() => handleQuickTime('08:00')}
-            className="px-2 py-2.5 text-xs sm:text-sm font-semibold rounded-xl transition-all shadow-sm whitespace-nowrap border hover:opacity-80 active:scale-95"
-            style={{ backgroundColor: 'var(--card-bg)', color: 'var(--card-text-primary)', borderColor: 'var(--card-border)' }}
-          >
-            🌅 8am
-          </button>
-          <button
-            onClick={() => handleQuickTime('12:00')}
-            className="px-2 py-2.5 text-xs sm:text-sm font-semibold rounded-xl transition-all shadow-sm whitespace-nowrap border hover:opacity-80 active:scale-95"
-            style={{ backgroundColor: 'var(--card-bg)', color: 'var(--card-text-primary)', borderColor: 'var(--card-border)' }}
-          >
-            ☀️ 12pm
-          </button>
-          <button
-            onClick={() => handleQuickTime('17:00')}
-            className="px-2 py-2.5 text-xs sm:text-sm font-semibold rounded-xl transition-all shadow-sm whitespace-nowrap border hover:opacity-80 active:scale-95"
-            style={{ backgroundColor: 'var(--card-bg)', color: 'var(--card-text-primary)', borderColor: 'var(--card-border)' }}
-          >
-            🌆 5pm
-          </button>
-        </div>
-      )}
+      {/* Quick time buttons - always shown */}
+      <div className="flex flex-wrap gap-2">
+        <button
+          onClick={() => handleQuickTime('09:00')}
+          className="flex-1 min-w-fit px-3 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all shadow-sm whitespace-nowrap border hover:opacity-80 active:scale-95"
+          style={{ backgroundColor: 'var(--card-bg)', color: 'var(--card-text-primary)', borderColor: 'var(--card-border)' }}
+        >
+          🌅 9am
+        </button>
+        <button
+          onClick={() => handleQuickTime('12:00')}
+          className="flex-1 min-w-fit px-3 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all shadow-sm whitespace-nowrap border hover:opacity-80 active:scale-95"
+          style={{ backgroundColor: 'var(--card-bg)', color: 'var(--card-text-primary)', borderColor: 'var(--card-border)' }}
+        >
+          ☀️ 12pm
+        </button>
+        <button
+          onClick={() => handleQuickTime('17:00')}
+          className="flex-1 min-w-fit px-3 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all shadow-sm whitespace-nowrap border hover:opacity-80 active:scale-95"
+          style={{ backgroundColor: 'var(--card-bg)', color: 'var(--card-text-primary)', borderColor: 'var(--card-border)' }}
+        >
+          🌆 5pm
+        </button>
+        <button
+          onClick={handleSetNow}
+          className="flex-1 min-w-fit px-3 py-2 text-xs sm:text-sm font-bold rounded-xl transition-all shadow-sm whitespace-nowrap text-white active:scale-95"
+          style={{ backgroundColor: '#0d9488' }}
+        >
+          ⏱️ Now
+        </button>
+      </div>
 
       <div className="flex flex-col gap-3">
-        {/* Time input with Now button */}
-        <div className="relative">
-          <input
-            type="text"
-            value={timeInput}
-            onChange={handleTimeChange}
-            onBlur={handleTimeBlur}
-            placeholder="e.g., 3pm, 15:00"
-            className="w-full h-12 sm:h-14 px-4 pr-20 text-lg sm:text-xl font-display font-bold rounded-xl focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400 outline-none transition-all shadow-sm border-2 placeholder:text-gray-400"
-            style={{ backgroundColor: 'var(--card-bg)', color: 'var(--card-text-primary)', borderColor: 'var(--card-border)' }}
-            aria-label="Time"
-            autoComplete="off"
-          />
-          <button
-            onClick={handleSetNow}
-            className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 text-sm font-bold text-white bg-gradient-to-r from-ocean-500 to-ocean-600 hover:from-ocean-600 hover:to-ocean-700 rounded-lg transition-all shadow-sm hover:shadow-md active:scale-95"
-          >
-            Now
-          </button>
+        {/* Time input with clock button */}
+        <div className="relative" ref={inputContainerRef}>
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <input
+                type="text"
+                value={timeInput}
+                onChange={handleTimeChange}
+                onBlur={handleTimeBlur}
+                onFocus={() => setShowTimePicker(false)}
+                placeholder="e.g., 3pm, 15:00"
+                className="w-full h-12 sm:h-14 px-4 text-lg sm:text-xl font-display font-bold rounded-xl focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400 outline-none transition-all shadow-sm border-2 placeholder:text-gray-400"
+                style={{ backgroundColor: 'var(--card-bg)', color: 'var(--card-text-primary)', borderColor: 'var(--card-border)' }}
+                aria-label="Time"
+                autoComplete="off"
+              />
+            </div>
+            <button
+              onClick={() => setShowTimePicker(!showTimePicker)}
+              className="h-12 sm:h-14 px-4 rounded-xl border-2 transition-all shadow-sm hover:shadow-md active:scale-95 flex items-center justify-center"
+              style={{ 
+                backgroundColor: showTimePicker ? '#0d9488' : 'var(--card-bg)', 
+                borderColor: showTimePicker ? '#0d9488' : 'var(--card-border)',
+                color: showTimePicker ? 'white' : 'var(--card-text-primary)'
+              }}
+              aria-label="Open time picker"
+            >
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </button>
+          </div>
+          
+          {/* Time Picker Dropdown */}
+          {showTimePicker && (
+            <TimePicker
+              value={sourceTime}
+              onChange={handleTimePickerChange}
+              useMilitaryTime={useMilitaryTime}
+              onClose={() => setShowTimePicker(false)}
+            />
+          )}
+          
           {error && (
             <p className="mt-2 text-xs text-red-600 dark:text-red-400 flex items-center gap-1">
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -196,9 +239,9 @@ export default function TimezoneInput() {
         </div>
       </div>
 
-      <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
-        <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-gray-100 dark:bg-gray-700 text-xs">💡</span>
-        Try: "3pm", "15:00", "3:30 PM", or "now"
+      <p className="text-sm flex items-center gap-2" style={{ color: 'var(--card-text-muted)' }}>
+        <span className="inline-flex items-center justify-center w-5 h-5 rounded text-xs" style={{ backgroundColor: 'var(--card-border)' }}>💡</span>
+        Type a time like "3pm" or "15:00", or use the clock picker
       </p>
     </div>
   );
