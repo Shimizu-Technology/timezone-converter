@@ -1,6 +1,7 @@
 import { ConvertedTime } from '../types/timezone.types';
 import clsx from 'clsx';
 import { useState, useEffect } from 'react';
+import { DateTime } from 'luxon';
 
 interface TimezoneCardProps {
   convertedTime: ConvertedTime;
@@ -13,12 +14,23 @@ export default function TimezoneCard({
   onRemove,
   isCurrent = false
 }: TimezoneCardProps) {
-  const { timezoneInfo, time, date, isDifferentDay, hoursDifference, isBusinessHours } = convertedTime;
+  const { timezoneInfo, time, date, isDifferentDay, hoursDifference, isBusinessHours, iso } = convertedTime;
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    setIsVisible(true);
+    const timer = setTimeout(() => setIsVisible(true), 50);
+    return () => clearTimeout(timer);
   }, []);
+
+  // Get the actual hour from the ISO string for accurate day/night calculation
+  const targetDateTime = DateTime.fromISO(iso);
+  const hour = targetDateTime.hour;
+
+  // Determine if it's day or night (6am-6pm is day)
+  const isDaytime = hour >= 6 && hour < 18;
+  const isMorning = hour >= 6 && hour < 12;
+  const isAfternoon = hour >= 12 && hour < 18;
+  const isEvening = hour >= 18 && hour < 21;
 
   const formatHoursDifference = (hours: number) => {
     if (hours === 0) return 'Same time';
@@ -26,80 +38,150 @@ export default function TimezoneCard({
     return `${sign}${hours}h`;
   };
 
-  const getBusinessHoursStatus = () => {
-    if (isBusinessHours) return { color: 'bg-green-500', label: 'Business hours' };
-    const hour = parseInt(time.split(':')[0]);
-    const isPM = time.includes('PM');
-    const hour24 = isPM && hour !== 12 ? hour + 12 : !isPM && hour === 12 ? 0 : hour;
-
-    if (hour24 >= 17 && hour24 < 21) return { color: 'bg-yellow-500', label: 'Evening' };
-    return { color: 'bg-gray-400', label: 'After hours' };
+  const getTimeOfDayInfo = () => {
+    if (isMorning) return { icon: '🌅', label: 'Morning' };
+    if (isAfternoon) return { icon: '☀️', label: 'Afternoon' };
+    if (isEvening) return { icon: '🌆', label: 'Evening' };
+    return { icon: '🌙', label: 'Night' };
   };
 
+  const getBusinessHoursStatus = () => {
+    if (isBusinessHours) {
+      return { 
+        dotColor: 'bg-emerald-500', 
+        bgColor: 'bg-emerald-100 dark:bg-emerald-900/50',
+        textColor: 'text-emerald-800 dark:text-emerald-200',
+        label: 'Business hours'
+      };
+    }
+    if (hour >= 17 && hour < 21) {
+      return { 
+        dotColor: 'bg-amber-500', 
+        bgColor: 'bg-amber-100 dark:bg-amber-900/50',
+        textColor: 'text-amber-800 dark:text-amber-200',
+        label: 'Evening'
+      };
+    }
+    return { 
+      dotColor: 'bg-gray-500', 
+      bgColor: 'bg-gray-200 dark:bg-gray-700',
+      textColor: 'text-gray-700 dark:text-gray-300',
+      label: 'After hours'
+    };
+  };
+
+  const timeOfDay = getTimeOfDayInfo();
   const businessStatus = getBusinessHoursStatus();
+
+  // Calculate progress through the day (for visual indicator)
+  const dayProgress = (hour / 24) * 100;
 
   return (
     <div
       className={clsx(
-        'relative p-5 sm:p-6 rounded-2xl border-2 transition-all duration-300 ease-out shadow-lg hover:shadow-xl',
-        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2',
-        isCurrent
-          ? 'bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200'
-          : 'bg-white border-gray-150 hover:border-gray-250'
+        'relative rounded-2xl transition-all duration-300 ease-out group overflow-hidden',
+        'shadow-md hover:shadow-lg',
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4',
+        isCurrent && 'ring-2 ring-ocean-400'
       )}
+      style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)', borderWidth: '1px', borderStyle: 'solid' }}
     >
-      {/* Remove button */}
-      <button
-        onClick={() => onRemove(timezoneInfo.id)}
-        className="absolute top-3 right-3 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
-        aria-label="Remove timezone"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-        >
-          <path
-            fillRule="evenodd"
-            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-            clipRule="evenodd"
-          />
-        </svg>
-      </button>
+      {/* Day/Night gradient indicator */}
+      <div 
+        className={clsx(
+          'h-1.5',
+          isDaytime 
+            ? 'bg-gradient-to-r from-amber-400 via-orange-400 to-amber-400'
+            : 'bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500'
+        )}
+      />
 
-      {/* Timezone info */}
-      <div className="pr-10">
-        <div className="flex items-center gap-2.5 mb-3">
-          <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-xl">
-            🕐
+      <div className="p-4 sm:p-5">
+        {/* Remove button - always visible on mobile */}
+        <button
+          onClick={() => onRemove(timezoneInfo.id)}
+          className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 rounded-lg transition-all sm:opacity-0 sm:group-hover:opacity-100 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30"
+          aria-label="Remove timezone"
+        >
+          <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+          </svg>
+        </button>
+
+        {/* Mobile: Header with time prominently displayed */}
+        <div className="flex items-start justify-between gap-3 mb-3">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            {/* Day/Night icon */}
+            <div className={clsx(
+              'w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center text-lg sm:text-xl flex-shrink-0',
+              isDaytime 
+                ? 'bg-amber-100 dark:bg-amber-900/40' 
+                : 'bg-indigo-100 dark:bg-indigo-900/40'
+            )}>
+              {timeOfDay.icon}
+            </div>
+            <div className="min-w-0 flex-1">
+              <h3 className="font-display text-base sm:text-lg font-bold truncate pr-8" style={{ color: 'var(--card-text-primary)' }}>
+                {timezoneInfo.displayName}
+              </h3>
+              <p className="text-xs sm:text-sm" style={{ color: 'var(--card-text-muted)' }}>
+                {timeOfDay.label} · {formatHoursDifference(hoursDifference)}
+              </p>
+            </div>
           </div>
-          <div className="flex-1">
-            <h3 className="text-lg font-bold text-gray-900">
-              {timezoneInfo.displayName}
-            </h3>
-            {/* Business hours indicator */}
-            <div className="flex items-center gap-2 mt-0.5">
-              <div className="flex items-center gap-1.5">
-                <div className={clsx('w-2.5 h-2.5 rounded-full shadow-sm', businessStatus.color)} title={businessStatus.label} />
-                <span className="text-xs font-medium text-gray-600">{businessStatus.label}</span>
-              </div>
-              <span className="text-xs font-semibold text-gray-500">• {formatHoursDifference(hoursDifference)}</span>
+          
+          {/* Time - prominent on right */}
+          <div className="text-right flex-shrink-0">
+            <div className="font-display text-2xl sm:text-4xl font-bold tracking-tight" style={{ color: 'var(--card-text-primary)' }}>
+              {time}
             </div>
           </div>
         </div>
 
-        {/* Time */}
-        <div className="text-4xl font-bold text-gray-900 mb-2">{time}</div>
+        {/* Date and status row */}
+        <div className="flex items-center justify-between gap-2 flex-wrap">
+          {/* Business hours badge */}
+          <div className={clsx(
+            'inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-full text-xs font-semibold',
+            businessStatus.bgColor,
+            businessStatus.textColor
+          )}>
+            <div className={clsx('w-2 h-2 rounded-full', businessStatus.dotColor)} />
+            {businessStatus.label}
+          </div>
 
-        {/* Date with day boundary indicator */}
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <span className="font-medium">{date}</span>
-          {isDifferentDay && (
-            <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-200">
-              Next day
-            </span>
-          )}
+          {/* Date info */}
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-xs sm:text-sm" style={{ color: 'var(--card-text-muted)' }}>{date}</span>
+            {isDifferentDay && (
+              <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-bold bg-coral-500 text-white shadow-sm">
+                {targetDateTime > DateTime.now() ? 'Next day' : 'Prev day'}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Day progress indicator */}
+        <div className="mt-3 sm:mt-4 pt-3 border-t border-gray-100 dark:border-gray-700">
+          <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-xs text-gray-400 dark:text-gray-500">
+            <span className="w-8 sm:w-10">12am</span>
+            <div className="flex-1 h-1.5 sm:h-2 rounded-full bg-gray-100 dark:bg-gray-700 relative overflow-hidden">
+              {/* Business hours zone highlight (9am-5pm = 37.5% to 70.8%) */}
+              <div 
+                className="absolute h-full bg-emerald-200 dark:bg-emerald-800/50"
+                style={{ left: '37.5%', width: '33.3%' }}
+              />
+              {/* Current time indicator */}
+              <div 
+                className={clsx(
+                  'absolute top-1/2 -translate-y-1/2 w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full border-2 border-white dark:border-gray-800 shadow-md z-10',
+                  isDaytime ? 'bg-amber-500' : 'bg-indigo-500'
+                )}
+                style={{ left: `calc(${dayProgress}% - 4px)` }}
+              />
+            </div>
+            <span className="w-8 sm:w-10 text-right">12pm</span>
+          </div>
         </div>
       </div>
     </div>

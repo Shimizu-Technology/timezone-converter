@@ -18,7 +18,6 @@ export default function TimezoneInput() {
     if (useMilitaryTime) {
       return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
     } else {
-      // Convert to 12hr format
       const period = hours >= 12 ? 'PM' : 'AM';
       const hours12 = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
       return `${hours12}:${minutes.toString().padStart(2, '0')} ${period}`;
@@ -26,7 +25,6 @@ export default function TimezoneInput() {
   };
 
   // Update local input when store changes or military time toggle changes
-  // But only if the user is not actively typing
   useEffect(() => {
     if (!isUserTypingRef.current) {
       setTimeInput(formatTimeForDisplay(sourceTime));
@@ -39,12 +37,10 @@ export default function TimezoneInput() {
     setTimeInput(value);
     setError(null);
 
-    // Clear any existing debounce timer
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
     }
 
-    // Only try to parse after user stops typing for 800ms
     if (value.length > 0) {
       debounceTimerRef.current = setTimeout(() => {
         try {
@@ -52,7 +48,6 @@ export default function TimezoneInput() {
           setSourceTime(time);
           isUserTypingRef.current = false;
         } catch (err) {
-          // Show error if input looks complete
           if (value.length > 2) {
             setError(err instanceof Error ? err.message : 'Invalid time format');
           }
@@ -65,13 +60,11 @@ export default function TimezoneInput() {
   };
 
   const handleTimeBlur = () => {
-    // Clear debounce timer and parse immediately on blur
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
     }
     isUserTypingRef.current = false;
 
-    // Reformat to standard format on blur
     try {
       const { time } = parseTime(timeInput);
       setSourceTime(time);
@@ -113,85 +106,89 @@ export default function TimezoneInput() {
   };
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-2">
-        <div className="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center">
-          <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <div className="space-y-4">
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-md" style={{ backgroundColor: '#0d9488' }}>
+          <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <label className="text-base font-bold text-gray-900">
+        <label className="font-display text-lg font-bold" style={{ color: 'var(--card-text-primary)' }}>
           What time is it in...
         </label>
       </div>
 
-      {/* Quick Guam time buttons */}
+      {/* Quick time buttons - shown for Guam timezone */}
       {sourceTimezone === 'Pacific/Guam' && (
-        <div className="flex gap-2 overflow-x-auto pb-1">
+        <div className="grid grid-cols-3 gap-2">
           <button
             onClick={() => handleQuickTime('08:00')}
-            className="px-3 py-2 text-xs font-semibold text-cyan-700 bg-cyan-50 hover:bg-cyan-100 rounded-lg transition-all shadow-sm border border-cyan-200 whitespace-nowrap"
+            className="px-2 py-2.5 text-xs sm:text-sm font-semibold rounded-xl transition-all shadow-sm whitespace-nowrap border hover:opacity-80 active:scale-95"
+            style={{ backgroundColor: 'var(--card-bg)', color: 'var(--card-text-primary)', borderColor: 'var(--card-border)' }}
           >
-            Start of Day (8am)
+            🌅 8am
           </button>
           <button
             onClick={() => handleQuickTime('12:00')}
-            className="px-3 py-2 text-xs font-semibold text-cyan-700 bg-cyan-50 hover:bg-cyan-100 rounded-lg transition-all shadow-sm border border-cyan-200 whitespace-nowrap"
+            className="px-2 py-2.5 text-xs sm:text-sm font-semibold rounded-xl transition-all shadow-sm whitespace-nowrap border hover:opacity-80 active:scale-95"
+            style={{ backgroundColor: 'var(--card-bg)', color: 'var(--card-text-primary)', borderColor: 'var(--card-border)' }}
           >
-            Lunch (12pm)
+            ☀️ 12pm
           </button>
           <button
             onClick={() => handleQuickTime('17:00')}
-            className="px-3 py-2 text-xs font-semibold text-cyan-700 bg-cyan-50 hover:bg-cyan-100 rounded-lg transition-all shadow-sm border border-cyan-200 whitespace-nowrap"
+            className="px-2 py-2.5 text-xs sm:text-sm font-semibold rounded-xl transition-all shadow-sm whitespace-nowrap border hover:opacity-80 active:scale-95"
+            style={{ backgroundColor: 'var(--card-bg)', color: 'var(--card-text-primary)', borderColor: 'var(--card-border)' }}
           >
-            End of Day (5pm)
+            🌆 5pm
           </button>
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
-        {/* Time input */}
-        <div className="sm:col-span-1">
-          <div className="relative">
-            <input
-              type="text"
-              value={timeInput}
-              onChange={handleTimeChange}
-              onBlur={handleTimeBlur}
-              placeholder="e.g., 3pm, 15:00, now"
-              className="w-full h-12 px-4 pr-20 text-lg font-semibold bg-white text-gray-900 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none transition-all shadow-sm"
-              aria-label="Time"
-              autoComplete="off"
-            />
-            <button
-              onClick={handleSetNow}
-              className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1.5 text-sm font-bold text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition-all shadow-sm"
-            >
-              Now
-            </button>
-          </div>
+      <div className="flex flex-col gap-3">
+        {/* Time input with Now button */}
+        <div className="relative">
+          <input
+            type="text"
+            value={timeInput}
+            onChange={handleTimeChange}
+            onBlur={handleTimeBlur}
+            placeholder="e.g., 3pm, 15:00"
+            className="w-full h-12 sm:h-14 px-4 pr-20 text-lg sm:text-xl font-display font-bold rounded-xl focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400 outline-none transition-all shadow-sm border-2 placeholder:text-gray-400"
+            style={{ backgroundColor: 'var(--card-bg)', color: 'var(--card-text-primary)', borderColor: 'var(--card-border)' }}
+            aria-label="Time"
+            autoComplete="off"
+          />
+          <button
+            onClick={handleSetNow}
+            className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 text-sm font-bold text-white bg-gradient-to-r from-ocean-500 to-ocean-600 hover:from-ocean-600 hover:to-ocean-700 rounded-lg transition-all shadow-sm hover:shadow-md active:scale-95"
+          >
+            Now
+          </button>
           {error && (
-            <p className="mt-1 text-xs text-red-600">{error}</p>
+            <p className="mt-2 text-xs text-red-600 dark:text-red-400 flex items-center gap-1">
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              {error}
+            </p>
           )}
         </div>
 
-        {/* Date selector */}
-        <div className="sm:col-span-1">
+        {/* Date and Timezone row - side by side */}
+        <div className="grid grid-cols-2 gap-3">
           <DateSelector />
-        </div>
-
-        {/* Timezone selector */}
-        <div className="sm:col-span-1">
           <select
             value={sourceTimezone}
             onChange={handleTimezoneChange}
-            className="w-full h-12 px-4 text-lg font-semibold border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none transition-all bg-white cursor-pointer shadow-sm"
+            className="w-full h-12 sm:h-14 px-3 sm:px-4 text-sm sm:text-base font-display font-semibold rounded-xl focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400 outline-none transition-all shadow-sm cursor-pointer appearance-none border-2"
+            style={{ backgroundColor: 'var(--card-bg)', color: 'var(--card-text-primary)', borderColor: 'var(--card-border)', backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.25em 1.25em', paddingRight: '2rem' }}
             aria-label="Source timezone"
           >
-            <optgroup label="Popular">
+            <optgroup label="Popular Timezones">
               {POPULAR_TIMEZONES.map((tz) => (
                 <option key={tz.value} value={tz.value}>
-                  {tz.label} ({tz.offset})
+                  {tz.label}
                 </option>
               ))}
             </optgroup>
@@ -199,7 +196,8 @@ export default function TimezoneInput() {
         </div>
       </div>
 
-      <p className="text-xs text-gray-500">
+      <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
+        <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-gray-100 dark:bg-gray-700 text-xs">💡</span>
         Try: "3pm", "15:00", "3:30 PM", or "now"
       </p>
     </div>

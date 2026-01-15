@@ -40,12 +40,10 @@ export default function DateSelector() {
     selected.setHours(0, 0, 0, 0);
 
     if (selected.getTime() === today.getTime()) return 'Today';
-    if (selected.getTime() === tomorrow.getTime()) return 'Tomorrow';
-    if (selected.getTime() === yesterday.getTime()) return 'Yesterday';
+    if (selected.getTime() === tomorrow.getTime()) return 'Tmrw';
+    if (selected.getTime() === yesterday.getTime()) return 'Yest';
 
-    // Format as "Mon, Jan 13"
     return selected.toLocaleDateString('en-US', {
-      weekday: 'short',
       month: 'short',
       day: 'numeric'
     });
@@ -82,17 +80,17 @@ export default function DateSelector() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full h-12 px-4 text-lg font-semibold bg-white text-gray-900 border-2 border-gray-200 rounded-xl hover:border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none transition-all shadow-sm flex items-center justify-between"
+        className="w-full h-12 sm:h-14 px-3 sm:px-4 text-sm sm:text-base font-display font-semibold rounded-xl outline-none transition-all shadow-sm flex items-center justify-between border-2 hover:border-ocean-400 focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400 active:scale-[0.98]"
+        style={{ backgroundColor: 'var(--card-bg)', color: 'var(--card-text-primary)', borderColor: 'var(--card-border)' }}
         aria-label="Select date"
       >
-        <div className="flex items-center gap-2">
-          <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-          <span>{getDisplayText()}</span>
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-base">📅</span>
+          <span className="truncate">{getDisplayText()}</span>
         </div>
         <svg
-          className={`w-5 h-5 text-gray-600 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+          style={{ color: 'var(--card-text-muted)' }}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -102,34 +100,46 @@ export default function DateSelector() {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-gray-200 rounded-xl shadow-lg z-50 overflow-hidden">
+        <div 
+          className="absolute top-full left-0 right-0 mt-2 rounded-xl shadow-xl z-50 overflow-hidden border-2 animate-scale-in"
+          style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}
+        >
           <button
             onClick={handleToday}
-            className={`w-full px-4 py-3 text-left text-base font-semibold hover:bg-gray-50 transition-colors ${
-              !sourceDate ? 'bg-blue-50 text-blue-700' : 'text-gray-900'
+            className={`w-full px-4 py-3.5 text-left text-base font-semibold transition-colors flex items-center gap-3 active:scale-[0.98] ${
+              !sourceDate 
+                ? 'bg-ocean-50 dark:bg-ocean-900/30 text-ocean-700 dark:text-ocean-300' 
+                : ''
             }`}
+            style={sourceDate ? { color: 'var(--card-text-primary)' } : undefined}
           >
+            <span className="text-lg">📅</span>
             Today
           </button>
           <button
             onClick={handleTomorrow}
-            className="w-full px-4 py-3 text-left text-base font-semibold text-gray-900 hover:bg-gray-50 transition-colors"
+            className="w-full px-4 py-3.5 text-left text-base font-semibold transition-colors flex items-center gap-3 active:scale-[0.98]"
+            style={{ color: 'var(--card-text-primary)' }}
           >
+            <span className="text-lg">📆</span>
             Tomorrow
           </button>
           <button
             onClick={handleYesterday}
-            className="w-full px-4 py-3 text-left text-base font-semibold text-gray-900 hover:bg-gray-50 transition-colors"
+            className="w-full px-4 py-3.5 text-left text-base font-semibold transition-colors flex items-center gap-3 active:scale-[0.98]"
+            style={{ color: 'var(--card-text-primary)' }}
           >
+            <span className="text-lg">🗓️</span>
             Yesterday
           </button>
-          <div className="border-t-2 border-gray-200"></div>
-          <label className="block px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer">
-            <span className="block text-sm font-semibold text-gray-700 mb-2">Custom date</span>
+          <div style={{ borderTopWidth: '1px', borderTopColor: 'var(--card-border)' }} />
+          <label className="block px-4 py-3 transition-colors cursor-pointer">
+            <span className="block text-sm font-semibold mb-2" style={{ color: 'var(--card-text-muted)' }}>Custom date</span>
             <input
               type="date"
               onChange={handleCustomDate}
-              className="w-full px-3 py-2 text-base font-medium border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none cursor-pointer"
+              className="w-full px-3 py-2.5 text-base font-medium rounded-lg focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400 outline-none cursor-pointer border"
+              style={{ backgroundColor: 'var(--card-bg)', color: 'var(--card-text-primary)', borderColor: 'var(--card-border)' }}
             />
           </label>
         </div>

@@ -2,10 +2,46 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌊</text></svg>" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f766e" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
     <title>Hafa Timezones - Convert Time Across Timezones</title>
-    <meta name="description" content="Convert time across multiple timezones instantly. Perfect for coordinating with teams in Guam, USA, Asia, and worldwide." />
+    <meta name="description" content="Convert time across multiple timezones instantly. Built in Guam with Chamorro spirit. Perfect for coordinating with teams worldwide." />
+    <meta name="keywords" content="timezone, converter, world clock, Guam, time zones, meeting scheduler" />
+    
+    <!-- Preconnect to Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Prevent flash of wrong theme -->
+    <script>
+      (function() {
+        // First, always remove dark class
+        document.documentElement.classList.remove('dark');
+        
+        let theme = 'light';
+        
+        // Check zustand persist storage
+        const stored = localStorage.getItem('hafa-theme-v2');
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored);
+            if (parsed.state && parsed.state.theme) {
+              theme = parsed.state.theme;
+            }
+          } catch (e) {}
+        }
+        
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const isDark = theme === 'dark' || (theme === 'system' && prefersDark);
+        
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+        }
+        // Note: We already removed 'dark' at the start, so no else needed
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

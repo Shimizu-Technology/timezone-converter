@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { DateTime } from 'luxon';
 import { TimezoneInfo } from '../types/timezone.types';
 import { getTimezoneInfo } from '../utils/timezoneUtils';
+import clsx from 'clsx';
 
 interface MeetingTimeFinderProps {
   sourceTimezone: string;
@@ -36,7 +37,6 @@ export default function MeetingTimeFinder({
   const overlappingHours = useMemo(() => {
     const slots: TimeSlot[] = [];
 
-    // For each hour of the day in source timezone
     for (let hour = 0; hour < 24; hour++) {
       const sourceTime = DateTime.now()
         .setZone(sourceTimezone)
@@ -45,7 +45,6 @@ export default function MeetingTimeFinder({
       const timezones: { [key: string]: string } = {};
       let allInBusinessHours = true;
 
-      // Check this hour in all timezones
       allTimezones.forEach(tz => {
         const convertedTime = sourceTime.setZone(tz.timezone);
         const convertedHour = convertedTime.hour;
@@ -54,7 +53,6 @@ export default function MeetingTimeFinder({
           ? convertedTime.toFormat('HH:mm')
           : convertedTime.toFormat('h:mm a');
 
-        // Check if within custom business hours
         if (convertedHour < businessHoursStart || convertedHour >= businessHoursEnd) {
           allInBusinessHours = false;
         }
@@ -90,7 +88,6 @@ export default function MeetingTimeFinder({
       }
     });
 
-    // Close last window if still open
     if (currentWindow !== null) {
       windows.push(currentWindow);
     }
@@ -109,8 +106,11 @@ export default function MeetingTimeFinder({
 
   if (targetTimezones.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500">
-        <p className="text-sm">Add at least one timezone to find meeting times</p>
+      <div className="text-center py-12">
+        <div className="text-5xl mb-4">📅</div>
+        <p className="text-gray-600 dark:text-gray-300">
+          Add at least one timezone to find meeting times
+        </p>
       </div>
     );
   }
@@ -118,20 +118,22 @@ export default function MeetingTimeFinder({
   return (
     <div className="space-y-6">
       {/* Business Hours Configuration */}
-      <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-        <h4 className="text-sm font-medium text-gray-700 mb-3">
+      <div className="p-5 rounded-xl border" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
+        <h4 className="text-sm font-semibold mb-4 flex items-center gap-2" style={{ color: 'var(--card-text-secondary)' }}>
+          <span className="w-6 h-6 rounded-lg flex items-center justify-center text-sm" style={{ backgroundColor: 'var(--card-border)' }}>⚙️</span>
           Define Business Hours
         </h4>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
-          <div className="flex items-center gap-2">
-            <label htmlFor="start-hour" className="text-sm text-gray-600 min-w-[40px]">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div className="flex items-center gap-3">
+            <label htmlFor="start-hour" className="text-sm font-medium" style={{ color: 'var(--card-text-muted)' }}>
               Start:
             </label>
             <select
               id="start-hour"
               value={businessHoursStart}
               onChange={(e) => setBusinessHoursStart(Number(e.target.value))}
-              className="px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
+              className="px-4 py-2 text-sm font-semibold border-2 rounded-xl focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400 outline-none"
+              style={{ backgroundColor: 'var(--card-bg)', color: 'var(--card-text-primary)', borderColor: 'var(--card-border)' }}
             >
               {Array.from({ length: 24 }, (_, i) => (
                 <option key={i} value={i}>
@@ -141,16 +143,17 @@ export default function MeetingTimeFinder({
               ))}
             </select>
           </div>
-          <span className="text-gray-400 hidden sm:inline">to</span>
-          <div className="flex items-center gap-2">
-            <label htmlFor="end-hour" className="text-sm text-gray-600 min-w-[40px]">
+          <span className="hidden sm:inline font-bold" style={{ color: 'var(--card-text-muted)' }}>→</span>
+          <div className="flex items-center gap-3">
+            <label htmlFor="end-hour" className="text-sm font-medium" style={{ color: 'var(--card-text-muted)' }}>
               End:
             </label>
             <select
               id="end-hour"
               value={businessHoursEnd}
               onChange={(e) => setBusinessHoursEnd(Number(e.target.value))}
-              className="px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
+              className="px-4 py-2 text-sm font-semibold border-2 rounded-xl focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400 outline-none"
+              style={{ backgroundColor: 'var(--card-bg)', color: 'var(--card-text-primary)', borderColor: 'var(--card-border)' }}
             >
               {Array.from({ length: 24 }, (_, i) => i + 1).map((i) => (
                 <option key={i} value={i}>
@@ -165,45 +168,39 @@ export default function MeetingTimeFinder({
 
       {/* Meeting Windows Summary */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-3">
+        <h3 className="font-display text-lg font-bold mb-4 flex items-center gap-2" style={{ color: 'var(--card-text-primary)' }}>
+          <span className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-lg text-white">✓</span>
           Overlapping Business Hours
         </h3>
         {meetingWindows.length > 0 ? (
-          <div className="space-y-2">
+          <div className="space-y-3">
             {meetingWindows.map((window, index) => (
               <div
                 key={index}
-                className="flex items-center gap-3 p-3 bg-green-50 border border-green-200 rounded-lg"
+                className="flex items-center gap-4 p-4 bg-emerald-100 dark:bg-emerald-900/40 border-2 border-emerald-400 dark:border-emerald-600 rounded-xl"
               >
-                <svg
-                  className="h-5 w-5 text-green-600"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
+                <div className="w-12 h-12 rounded-xl bg-emerald-500 flex items-center justify-center text-white text-xl shadow-md">
+                  ✓
+                </div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900">
-                    {formatHour(window.start)} - {formatHour(window.end + 1)}
+                  <p className="font-display text-xl font-bold text-emerald-900 dark:text-emerald-100">
+                    {formatHour(window.start)} – {formatHour(window.end + 1)}
                   </p>
-                  <p className="text-xs text-gray-600">
-                    in {allTimezones[0].displayName || 'source timezone'}
+                  <p className="text-sm text-emerald-700 dark:text-emerald-300">
+                    {window.end - window.start + 1} hour{window.end - window.start > 0 ? 's' : ''} in {allTimezones[0].displayName}
                   </p>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
-            <p className="text-sm text-amber-800">
-              No overlapping business hours found. Consider asynchronous communication or
-              flexible meeting times.
+          <div className="p-6 bg-amber-100 dark:bg-amber-900/40 border-2 border-amber-400 dark:border-amber-600 rounded-xl text-center">
+            <div className="text-4xl mb-3">😔</div>
+            <p className="font-semibold mb-1 text-amber-900 dark:text-amber-100">
+              No overlapping business hours found
+            </p>
+            <p className="text-sm text-amber-700 dark:text-amber-300">
+              Consider asynchronous communication or flexible meeting times
             </p>
           </div>
         )}
@@ -211,30 +208,45 @@ export default function MeetingTimeFinder({
 
       {/* Detailed Hour Grid */}
       <div>
-        <h4 className="text-sm font-medium text-gray-700 mb-2">
+        <h4 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--card-text-secondary)' }}>
+          <span className="w-6 h-6 rounded-lg flex items-center justify-center text-sm" style={{ backgroundColor: 'var(--card-border)' }}>📊</span>
           Hour-by-Hour Breakdown
         </h4>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 max-h-96 overflow-y-auto">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 max-h-80 overflow-y-auto p-1">
           {overlappingHours.map((slot) => (
             <div
               key={slot.hour}
-              className={`p-2 rounded text-xs border ${
+              className={clsx(
+                'p-3 rounded-xl text-xs border-2 transition-all',
                 slot.isOverlapping
-                  ? 'bg-green-50 border-green-300'
-                  : 'bg-gray-50 border-gray-200'
-              }`}
+                  ? 'bg-emerald-100 dark:bg-emerald-900/40 border-emerald-400 dark:border-emerald-600'
+                  : ''
+              )}
+              style={!slot.isOverlapping ? { backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' } : undefined}
             >
-              <div className="font-semibold text-gray-900 mb-1">
+              <div className={clsx(
+                'font-display font-bold text-sm mb-2',
+                slot.isOverlapping ? 'text-emerald-800 dark:text-emerald-200' : ''
+              )} style={!slot.isOverlapping ? { color: 'var(--card-text-primary)' } : undefined}>
                 {formatHour(slot.hour)}
               </div>
-              {allTimezones.map((tz) => (
-                <div key={tz.timezone} className="text-gray-600">
-                  <span className="font-medium">
-                    {tz.displayName}:
-                  </span>{' '}
-                  {slot.timezones[tz.timezone]}
-                </div>
-              ))}
+              <div className="space-y-1">
+                {allTimezones.map((tz) => (
+                  <div key={tz.timezone} className="flex justify-between items-center gap-2">
+                    <span className="truncate text-xs" style={{ color: 'var(--card-text-muted)' }}>
+                      {tz.displayName.split(' ')[0]}
+                    </span>
+                    <span className={clsx(
+                      'font-mono text-xs px-1.5 py-0.5 rounded font-semibold',
+                      slot.isOverlapping 
+                        ? 'bg-emerald-300 dark:bg-emerald-700 text-emerald-900 dark:text-emerald-100' 
+                        : ''
+                    )} style={!slot.isOverlapping ? { backgroundColor: 'var(--card-border)', color: 'var(--card-text-secondary)' } : undefined}>
+                      {slot.timezones[tz.timezone]}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>

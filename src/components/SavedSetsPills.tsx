@@ -14,7 +14,7 @@ export default function SavedSetsPills({ onNewSet }: SavedSetsPillsProps) {
   };
 
   const handleDeleteSet = (setId: string, event: React.MouseEvent) => {
-    event.stopPropagation(); // Prevent loading the set when deleting
+    event.stopPropagation();
     if (window.confirm('Are you sure you want to delete this saved set?')) {
       deleteSet(setId);
     }
@@ -22,15 +22,21 @@ export default function SavedSetsPills({ onNewSet }: SavedSetsPillsProps) {
 
   if (savedSets.length === 0) {
     return (
-      <div className="flex items-center gap-2">
-        <span className="text-sm text-gray-500">No saved sets yet.</span>
+      <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+            <span className="text-lg">📁</span>
+          </div>
+          <span className="text-sm font-semibold" style={{ color: 'var(--card-text-secondary)' }}>No saved sets yet</span>
+        </div>
         <button
           onClick={onNewSet}
-          className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-50 rounded-full hover:bg-blue-100 transition-colors"
+          className="inline-flex items-center px-4 py-2.5 text-sm font-bold rounded-xl transition-all text-white shadow-md hover:shadow-lg"
+          style={{ backgroundColor: '#0d9488' }}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 mr-1"
+            className="h-4 w-4 mr-2"
             viewBox="0 0 20 20"
             fill="currentColor"
           >
@@ -47,40 +53,45 @@ export default function SavedSetsPills({ onNewSet }: SavedSetsPillsProps) {
   }
 
   return (
-    <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-700">
-        Saved Sets
-      </label>
+    <div className="space-y-3">
+      <div className="flex items-center gap-2">
+        <div className="w-8 h-8 rounded-lg bg-coral-100 dark:bg-coral-900/40 flex items-center justify-center">
+          <span className="text-lg">📁</span>
+        </div>
+        <label className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+          Saved Sets
+        </label>
+      </div>
 
       <div className="flex flex-wrap gap-2">
         {savedSets.map((set) => (
           <div
             key={set.id}
-            className="group relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-full hover:bg-gray-50 hover:border-gray-400 transition-all"
+            className="group relative inline-flex items-center transition-all"
             onMouseEnter={() => setDeletingSetId(set.id)}
             onMouseLeave={() => setDeletingSetId(null)}
           >
             <button
               onClick={() => handleLoadSet(set.id)}
-              className="flex items-center"
+              className="inline-flex items-center px-4 py-2.5 text-sm font-semibold rounded-xl transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-2 border-gray-200 dark:border-gray-600 hover:border-ocean-400 dark:hover:border-ocean-500 hover:shadow-md"
             >
               <span className="mr-2">{set.name}</span>
-              <span className="text-xs text-gray-500">
-                ({set.timezones.length})
+              <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-600 text-gray-600 dark:text-gray-300">
+                {set.timezones.length}
               </span>
             </button>
 
             {/* Delete button (appears on hover) */}
             <button
               onClick={(e) => handleDeleteSet(set.id, e)}
-              className={`ml-2 p-0.5 text-gray-400 hover:text-red-600 transition-opacity ${
-                deletingSetId === set.id ? 'opacity-100' : 'opacity-0'
+              className={`absolute -right-2 -top-2 p-1.5 bg-red-500 text-white rounded-full shadow-md hover:bg-red-600 transition-all ${
+                deletingSetId === set.id ? 'opacity-100 scale-100' : 'opacity-0 scale-75'
               }`}
               aria-label="Delete set"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4"
+                className="h-3 w-3"
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -97,11 +108,11 @@ export default function SavedSetsPills({ onNewSet }: SavedSetsPillsProps) {
         {/* New set button */}
         <button
           onClick={onNewSet}
-          className="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-full hover:bg-blue-100 transition-colors"
+          className="inline-flex items-center px-4 py-2.5 text-sm font-semibold rounded-xl transition-all bg-ocean-50 dark:bg-ocean-900/40 text-ocean-700 dark:text-ocean-200 border-2 border-ocean-200 dark:border-ocean-700 border-dashed hover:bg-ocean-100 dark:hover:bg-ocean-800/60 hover:border-solid"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 mr-1"
+            className="h-4 w-4 mr-2"
             viewBox="0 0 20 20"
             fill="currentColor"
           >
