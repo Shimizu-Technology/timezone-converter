@@ -4,24 +4,37 @@ import { useTimezoneStore } from '../store/timezoneStore';
 export default function DateSelector() {
   const { sourceDate, setSourceDate } = useTimezoneStore();
   const [isOpen, setIsOpen] = useState(false);
+  const [isDateInputFocused, setIsDateInputFocused] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const dateInputRef = useRef<HTMLInputElement>(null);
 
-  // Close dropdown when clicking outside
+  // Close dropdown when clicking outside (but not when date picker is active)
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      // Don't close if the date input is focused (native picker is open)
+      if (isDateInputFocused) return;
+      
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      // Use a small delay to allow the native date picker to open
+      const timeoutId = setTimeout(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+      }, 100);
+      
+      return () => {
+        clearTimeout(timeoutId);
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isOpen, isDateInputFocused]);
 
   // Get display text for current selection
   const getDisplayText = () => {
@@ -133,15 +146,22 @@ export default function DateSelector() {
             Yesterday
           </button>
           <div style={{ borderTopWidth: '1px', borderTopColor: 'var(--card-border)' }} />
-          <label className="block px-4 py-3 transition-colors cursor-pointer">
+          <div className="px-4 py-3">
             <span className="block text-sm font-semibold mb-2" style={{ color: 'var(--card-text-muted)' }}>Custom date</span>
             <input
+              ref={dateInputRef}
               type="date"
               onChange={handleCustomDate}
+              onFocus={() => setIsDateInputFocused(true)}
+              onBlur={() => {
+                setIsDateInputFocused(false);
+                // Close dropdown after a small delay to allow date selection
+                setTimeout(() => setIsOpen(false), 200);
+              }}
               className="w-full px-3 py-2.5 text-base font-medium rounded-lg focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400 outline-none cursor-pointer border"
               style={{ backgroundColor: 'var(--card-bg)', color: 'var(--card-text-primary)', borderColor: 'var(--card-border)' }}
             />
-          </label>
+          </div>
         </div>
       )}
     </div>
