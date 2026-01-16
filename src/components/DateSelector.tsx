@@ -1,56 +1,12 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { useTimezoneStore } from '../store/timezoneStore';
-
-// Enable this to see debug info on mobile - SET TO TRUE FOR DEBUGGING
-const DEBUG_MODE = true;
 
 export default function DateSelector() {
   const { sourceDate, setSourceDate } = useTimezoneStore();
   const [isOpen, setIsOpen] = useState(false);
-  const [debugLog, setDebugLog] = useState<string[]>([]);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const dateInputRef = useRef<HTMLInputElement>(null);
-  const isSelectingDateRef = useRef(false);
 
-  const log = (msg: string) => {
-    if (DEBUG_MODE) {
-      setDebugLog(prev => [...prev.slice(-4), `${new Date().toLocaleTimeString()}: ${msg}`]);
-      console.log('[DateSelector]', msg);
-    }
-  };
-
-  // Close dropdown when clicking outside - but ONLY if not interacting with date input
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-      log(`Outside click, isSelecting: ${isSelectingDateRef.current}`);
-      
-      // If user is selecting a date, don't close
-      if (isSelectingDateRef.current) {
-        log('Blocked close - selecting date');
-        return;
-      }
-      
-      // Check if click is inside our dropdown
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        log('Closing dropdown');
-        setIsOpen(false);
-      }
-    };
-
-    if (isOpen) {
-      // Delay adding listener to avoid immediate close
-      const timeoutId = setTimeout(() => {
-        document.addEventListener('touchend', handleClickOutside, { passive: true });
-        document.addEventListener('click', handleClickOutside);
-      }, 200);
-      
-      return () => {
-        clearTimeout(timeoutId);
-        document.removeEventListener('touchend', handleClickOutside);
-        document.removeEventListener('click', handleClickOutside);
-      };
-    }
-  }, [isOpen]);
+  // NO outside click handler - just close when selection is made or Cancel is tapped
+  // This is the most reliable approach for iOS native date picker
 
   // Get display text for current selection
   const getDisplayText = () => {
@@ -106,7 +62,7 @@ export default function DateSelector() {
   };
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full h-10 sm:h-14 px-2 sm:px-4 text-xs sm:text-base font-display font-semibold rounded-lg sm:rounded-xl outline-none transition-all shadow-sm flex items-center justify-between border-2 hover:border-ocean-400 focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400 active:scale-[0.98]"
@@ -165,45 +121,23 @@ export default function DateSelector() {
           <div className="px-4 py-3">
             <span className="block text-sm font-semibold mb-2" style={{ color: 'var(--card-text-muted)' }}>Custom date</span>
             <input
-              ref={dateInputRef}
               type="date"
-              onChange={(e) => {
-                log('Date changed: ' + e.target.value);
-                handleCustomDate(e);
-              }}
-              onMouseDown={() => {
-                log('Mouse down on date input');
-                isSelectingDateRef.current = true;
-              }}
-              onTouchStart={() => {
-                log('Touch start on date input');
-                isSelectingDateRef.current = true;
-              }}
-              onFocus={() => {
-                log('Date input focused');
-                isSelectingDateRef.current = true;
-              }}
-              onBlur={() => {
-                log('Date input blurred');
-                // Give time for the date to be selected
-                setTimeout(() => {
-                  log('Blur timeout - resetting isSelecting');
-                  isSelectingDateRef.current = false;
-                }, 500);
-              }}
+              onChange={handleCustomDate}
               className="w-full px-3 py-2.5 text-base font-medium rounded-lg focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400 outline-none cursor-pointer border"
               style={{ backgroundColor: 'var(--card-bg)', color: 'var(--card-text-primary)', borderColor: 'var(--card-border)' }}
             />
           </div>
           
-          {/* Debug panel - only shows when DEBUG_MODE is true */}
-          {DEBUG_MODE && debugLog.length > 0 && (
-            <div className="px-4 py-2 bg-yellow-100 text-xs font-mono">
-              {debugLog.map((msg, i) => (
-                <div key={i}>{msg}</div>
-              ))}
-            </div>
-          )}
+          {/* Close button for mobile */}
+          <div className="px-4 py-3 border-t" style={{ borderColor: 'var(--card-border)' }}>
+            <button
+              onClick={() => setIsOpen(false)}
+              className="w-full py-2.5 text-sm font-semibold rounded-lg transition-all"
+              style={{ backgroundColor: 'var(--card-border)', color: 'var(--card-text-primary)' }}
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       )}
     </div>
