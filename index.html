@@ -2,13 +2,36 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌊</text></svg>" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0f766e" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+    
+    <!-- Favicon and Icons -->
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#0d9488" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Hafa Time" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="Hafa Timezones" />
+    <meta name="msapplication-TileColor" content="#0d9488" />
+    
     <title>Hafa Timezones - Convert Time Across Timezones</title>
     <meta name="description" content="Convert time across multiple timezones instantly. Built in Guam with Chamorro spirit. Perfect for coordinating with teams worldwide." />
     <meta name="keywords" content="timezone, converter, world clock, Guam, time zones, meeting scheduler" />
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Hafa Timezones" />
+    <meta property="og:description" content="Convert time across timezones instantly. Built with love in Guam." />
+    <meta property="og:image" content="/pwa-512x512.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Hafa Timezones" />
+    <meta name="twitter:description" content="Convert time across timezones instantly. Built with love in Guam." />
     
     <!-- Preconnect to Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -39,7 +62,6 @@
         if (isDark) {
           document.documentElement.classList.add('dark');
         }
-        // Note: We already removed 'dark' at the start, so no else needed
       })();
     </script>
   </head>

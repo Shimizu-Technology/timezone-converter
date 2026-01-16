@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
-import { useThemeStore, getEffectiveTheme, applyTheme } from './store/themeStore'
+import { useThemeStore, applyTheme } from './store/themeStore'
 
 // Force remove dark class first, then apply correct theme
 document.documentElement.classList.remove('dark');

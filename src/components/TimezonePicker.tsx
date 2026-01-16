@@ -84,7 +84,7 @@ export default function TimezonePicker({ onClose }: TimezonePickerProps) {
                   </p>
                 </div>
               ) : (
-                filteredTimezones.map((timezone, index) => (
+                filteredTimezones.map((timezone) => (
                   <Combobox.Option
                     key={timezone.value}
                     value={timezone.value}

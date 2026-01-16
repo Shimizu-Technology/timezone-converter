@@ -72,14 +72,6 @@ export default function TimePicker({ value, onChange, useMilitaryTime, onClose }
     onClose();
   };
 
-  // Generate hour options
-  const hourOptions = useMilitaryTime
-    ? Array.from({ length: 24 }, (_, i) => i)
-    : Array.from({ length: 12 }, (_, i) => i === 0 ? 12 : i);
-
-  // Generate minute options (in 5-minute intervals for easier selection)
-  const minuteOptions = Array.from({ length: 12 }, (_, i) => i * 5);
-
   // Get display hour for 12-hour format
   const getDisplayHour = (hour: number) => {
     if (useMilitaryTime) return hour;
