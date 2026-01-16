@@ -97,13 +97,13 @@ export default function TimezoneCard({
       />
 
       <div className="p-4 sm:p-5">
-        {/* Remove button - positioned on gradient bar, top right */}
+        {/* Remove button - subtle, appears on hover */}
         <button
           onClick={() => onRemove(timezoneInfo.id)}
-          className="absolute top-2 right-2 w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center transition-all z-20 bg-white/80 dark:bg-gray-800/80 text-gray-400 dark:text-gray-400 hover:bg-red-500 hover:text-white shadow-sm backdrop-blur-sm"
+          className="absolute top-3 right-3 sm:top-4 sm:right-4 p-1 rounded-full flex items-center justify-center transition-all duration-200 z-20 text-gray-400/50 dark:text-gray-500/60 hover:text-red-500 hover:bg-red-50 dark:hover:text-red-400 dark:hover:bg-red-900/30"
           aria-label="Remove timezone"
         >
-          <svg className="h-2.5 w-2.5 sm:h-3 sm:w-3" viewBox="0 0 20 20" fill="currentColor">
+          <svg className="h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
           </svg>
         </button>

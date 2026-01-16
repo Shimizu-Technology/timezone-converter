@@ -128,15 +128,16 @@ function App() {
   return (
     <div className="app-container transition-colors duration-300">
       <div className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8">
-        {/* Header */}
-        <header className="mb-6 sm:mb-8 animate-fade-in">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
-            <div className="flex items-center gap-3 sm:gap-4">
-              <WaveLogo size={56} className="hidden sm:flex" />
-              <WaveLogo size={44} className="flex sm:hidden" />
-              <div>
+        {/* Header - compact single row on mobile */}
+        <header className="mb-4 sm:mb-8 animate-fade-in">
+          <div className="flex items-center justify-between gap-2 sm:gap-6">
+            {/* Logo and title */}
+            <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+              <WaveLogo size={56} className="hidden sm:flex flex-shrink-0" />
+              <WaveLogo size={36} className="flex sm:hidden flex-shrink-0" />
+              <div className="min-w-0">
                 <h1 
-                  className="font-display text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight"
+                  className="font-display text-lg sm:text-4xl lg:text-5xl font-bold tracking-tight"
                   style={{
                     background: 'linear-gradient(to right, #0d9488, #14b8a6, #06b6d4)',
                     WebkitBackgroundClip: 'text',
@@ -146,28 +147,28 @@ function App() {
                 >
                   Hafa Timezones
                 </h1>
-                <p className="text-[var(--color-text-muted)] font-body text-xs sm:text-sm mt-0.5">
+                <p className="hidden sm:block text-[var(--color-text-muted)] font-body text-xs sm:text-sm mt-0.5">
                   Convert time instantly • Built in Guam 🌴
                 </p>
               </div>
             </div>
 
-            {/* Theme and format toggles */}
-            <div className="flex items-center gap-2 sm:gap-3">
+            {/* Theme and format toggles - always on same row */}
+            <div className="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">
               {/* Time format toggle */}
-              <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl shadow-sm" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)', borderWidth: '1px', borderStyle: 'solid' }}>
-                <span className="text-xs sm:text-sm font-bold" style={{ color: 'var(--card-text-primary)' }}>
+              <div className="flex items-center gap-1.5 sm:gap-3 px-2 sm:px-4 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl shadow-sm" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)', borderWidth: '1px', borderStyle: 'solid' }}>
+                <span className="text-[10px] sm:text-sm font-bold" style={{ color: 'var(--card-text-primary)' }}>
                   {useMilitaryTime ? '24hr' : '12hr'}
                 </span>
                 <button
                   onClick={toggleMilitaryTime}
-                  className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-ocean-400 focus:ring-offset-2"
+                  className="relative inline-flex h-5 w-9 sm:h-6 sm:w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-ocean-400 focus:ring-offset-2"
                   style={{ backgroundColor: useMilitaryTime ? '#0d9488' : '#9ca3af' }}
                   aria-label="Toggle time format"
                 >
                   <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-md transition-transform ${
-                      useMilitaryTime ? 'translate-x-6' : 'translate-x-1'
+                    className={`inline-block h-3.5 w-3.5 sm:h-4 sm:w-4 transform rounded-full bg-white shadow-md transition-transform ${
+                      useMilitaryTime ? 'translate-x-4 sm:translate-x-6' : 'translate-x-1'
                     }`}
                   />
                 </button>
@@ -176,16 +177,16 @@ function App() {
               {/* Theme toggle */}
               <button
                 onClick={toggleTheme}
-                className="p-2.5 sm:p-3 rounded-xl shadow-sm hover:shadow-md transition-all min-w-[44px] min-h-[44px] flex items-center justify-center"
+                className="p-2 sm:p-3 rounded-lg sm:rounded-xl shadow-sm hover:shadow-md transition-all min-w-[36px] min-h-[36px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center"
                 style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)', borderWidth: '1px', borderStyle: 'solid' }}
                 aria-label="Toggle theme"
               >
                 {isDark ? (
-                  <svg className="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" />
                   </svg>
                 ) : (
-                  <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
                   </svg>
                 )}
