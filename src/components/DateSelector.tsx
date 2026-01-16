@@ -1,37 +1,56 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useTimezoneStore } from '../store/timezoneStore';
+
+// Enable this to see debug info on mobile - SET TO TRUE FOR DEBUGGING
+const DEBUG_MODE = true;
 
 export default function DateSelector() {
   const { sourceDate, setSourceDate } = useTimezoneStore();
   const [isOpen, setIsOpen] = useState(false);
-  const [datePickerActive, setDatePickerActive] = useState(false);
+  const [debugLog, setDebugLog] = useState<string[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const dateInputRef = useRef<HTMLInputElement>(null);
+  const isSelectingDateRef = useRef(false);
 
-  // Close dropdown when clicking outside
+  const log = (msg: string) => {
+    if (DEBUG_MODE) {
+      setDebugLog(prev => [...prev.slice(-4), `${new Date().toLocaleTimeString()}: ${msg}`]);
+      console.log('[DateSelector]', msg);
+    }
+  };
+
+  // Close dropdown when clicking outside - but ONLY if not interacting with date input
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      // Don't close if date picker is active
-      if (datePickerActive) return;
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      log(`Outside click, isSelecting: ${isSelectingDateRef.current}`);
+      
+      // If user is selecting a date, don't close
+      if (isSelectingDateRef.current) {
+        log('Blocked close - selecting date');
+        return;
+      }
       
       // Check if click is inside our dropdown
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        log('Closing dropdown');
         setIsOpen(false);
       }
     };
 
     if (isOpen) {
-      // Use 'click' instead of 'mousedown' to give focus events time to fire
-      document.addEventListener('click', handleClickOutside, true);
-      return () => document.removeEventListener('click', handleClickOutside, true);
+      // Delay adding listener to avoid immediate close
+      const timeoutId = setTimeout(() => {
+        document.addEventListener('touchend', handleClickOutside, { passive: true });
+        document.addEventListener('click', handleClickOutside);
+      }, 200);
+      
+      return () => {
+        clearTimeout(timeoutId);
+        document.removeEventListener('touchend', handleClickOutside);
+        document.removeEventListener('click', handleClickOutside);
+      };
     }
-  }, [isOpen, datePickerActive]);
-
-  // Handler for date input interactions - prevents dropdown from closing
-  const handleDateInputInteraction = useCallback((e: React.MouseEvent | React.TouchEvent) => {
-    e.stopPropagation();
-    setDatePickerActive(true);
-  }, []);
+  }, [isOpen]);
 
   // Get display text for current selection
   const getDisplayText = () => {
@@ -148,21 +167,43 @@ export default function DateSelector() {
             <input
               ref={dateInputRef}
               type="date"
-              onChange={handleCustomDate}
-              onClick={handleDateInputInteraction}
-              onTouchStart={handleDateInputInteraction}
-              onFocus={() => setDatePickerActive(true)}
+              onChange={(e) => {
+                log('Date changed: ' + e.target.value);
+                handleCustomDate(e);
+              }}
+              onMouseDown={() => {
+                log('Mouse down on date input');
+                isSelectingDateRef.current = true;
+              }}
+              onTouchStart={() => {
+                log('Touch start on date input');
+                isSelectingDateRef.current = true;
+              }}
+              onFocus={() => {
+                log('Date input focused');
+                isSelectingDateRef.current = true;
+              }}
               onBlur={() => {
-                // Delay to allow date selection to complete
+                log('Date input blurred');
+                // Give time for the date to be selected
                 setTimeout(() => {
-                  setDatePickerActive(false);
-                  setIsOpen(false);
-                }, 300);
+                  log('Blur timeout - resetting isSelecting');
+                  isSelectingDateRef.current = false;
+                }, 500);
               }}
               className="w-full px-3 py-2.5 text-base font-medium rounded-lg focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400 outline-none cursor-pointer border"
               style={{ backgroundColor: 'var(--card-bg)', color: 'var(--card-text-primary)', borderColor: 'var(--card-border)' }}
             />
           </div>
+          
+          {/* Debug panel - only shows when DEBUG_MODE is true */}
+          {DEBUG_MODE && debugLog.length > 0 && (
+            <div className="px-4 py-2 bg-yellow-100 text-xs font-mono">
+              {debugLog.map((msg, i) => (
+                <div key={i}>{msg}</div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
