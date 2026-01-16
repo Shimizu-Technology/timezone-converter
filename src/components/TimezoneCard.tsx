@@ -130,8 +130,8 @@ export default function TimezoneCard({
             </div>
           </div>
           
-          {/* Time display */}
-          <div className="text-right flex-shrink-0">
+          {/* Time display - with padding for X button */}
+          <div className="text-right flex-shrink-0 pr-6 sm:pr-8">
             <div className="font-display text-2xl sm:text-4xl font-bold tracking-tight" style={{ color: 'var(--card-text-primary)' }}>
               {time}
             </div>
