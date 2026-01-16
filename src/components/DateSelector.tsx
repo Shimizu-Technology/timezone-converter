@@ -105,7 +105,7 @@ export default function DateSelector() {
 
       {isOpen && (
         <div 
-          className="absolute top-full left-0 mt-2 rounded-xl shadow-xl z-[9999] overflow-hidden border-2 animate-scale-in min-w-[200px] sm:min-w-[240px]"
+          className="fixed sm:absolute left-4 right-4 sm:left-0 sm:right-auto top-auto sm:top-full mt-2 rounded-xl shadow-xl z-[9999] overflow-hidden border-2 animate-scale-in sm:min-w-[240px]"
           style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}
         >
           <button
