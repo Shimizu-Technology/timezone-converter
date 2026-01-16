@@ -1,40 +1,37 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTimezoneStore } from '../store/timezoneStore';
 
 export default function DateSelector() {
   const { sourceDate, setSourceDate } = useTimezoneStore();
   const [isOpen, setIsOpen] = useState(false);
-  const [isDateInputFocused, setIsDateInputFocused] = useState(false);
+  const [datePickerActive, setDatePickerActive] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const dateInputRef = useRef<HTMLInputElement>(null);
 
-  // Close dropdown when clicking outside (but not when date picker is active)
+  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      // Don't close if the date input is focused (native picker is open)
-      if (isDateInputFocused) return;
+      // Don't close if date picker is active
+      if (datePickerActive) return;
       
+      // Check if click is inside our dropdown
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
 
     if (isOpen) {
-      // Use a small delay to allow the native date picker to open
-      const timeoutId = setTimeout(() => {
-        document.addEventListener('mousedown', handleClickOutside);
-      }, 100);
-      
-      return () => {
-        clearTimeout(timeoutId);
-        document.removeEventListener('mousedown', handleClickOutside);
-      };
+      // Use 'click' instead of 'mousedown' to give focus events time to fire
+      document.addEventListener('click', handleClickOutside, true);
+      return () => document.removeEventListener('click', handleClickOutside, true);
     }
+  }, [isOpen, datePickerActive]);
 
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isOpen, isDateInputFocused]);
+  // Handler for date input interactions - prevents dropdown from closing
+  const handleDateInputInteraction = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    e.stopPropagation();
+    setDatePickerActive(true);
+  }, []);
 
   // Get display text for current selection
   const getDisplayText = () => {
@@ -114,35 +111,35 @@ export default function DateSelector() {
 
       {isOpen && (
         <div 
-          className="absolute top-full left-0 right-0 mt-2 rounded-xl shadow-xl z-[9999] overflow-hidden border-2 animate-scale-in"
+          className="absolute top-full left-0 mt-2 rounded-xl shadow-xl z-[9999] overflow-hidden border-2 animate-scale-in min-w-[200px] sm:min-w-[240px]"
           style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}
         >
           <button
             onClick={handleToday}
-            className={`w-full px-4 py-3.5 text-left text-base font-semibold transition-colors flex items-center gap-3 active:scale-[0.98] ${
+            className={`w-full px-4 py-3 text-left text-sm sm:text-base font-semibold transition-colors flex items-center gap-3 active:scale-[0.98] ${
               !sourceDate 
                 ? 'bg-ocean-50 dark:bg-ocean-900/30 text-ocean-700 dark:text-ocean-300' 
                 : ''
             }`}
             style={sourceDate ? { color: 'var(--card-text-primary)' } : undefined}
           >
-            <span className="text-lg">📅</span>
+            <span className="text-base sm:text-lg">📅</span>
             Today
           </button>
           <button
             onClick={handleTomorrow}
-            className="w-full px-4 py-3.5 text-left text-base font-semibold transition-colors flex items-center gap-3 active:scale-[0.98]"
+            className="w-full px-4 py-3 text-left text-sm sm:text-base font-semibold transition-colors flex items-center gap-3 active:scale-[0.98]"
             style={{ color: 'var(--card-text-primary)' }}
           >
-            <span className="text-lg">📆</span>
+            <span className="text-base sm:text-lg">📆</span>
             Tomorrow
           </button>
           <button
             onClick={handleYesterday}
-            className="w-full px-4 py-3.5 text-left text-base font-semibold transition-colors flex items-center gap-3 active:scale-[0.98]"
+            className="w-full px-4 py-3 text-left text-sm sm:text-base font-semibold transition-colors flex items-center gap-3 active:scale-[0.98]"
             style={{ color: 'var(--card-text-primary)' }}
           >
-            <span className="text-lg">🗓️</span>
+            <span className="text-base sm:text-lg">🗓️</span>
             Yesterday
           </button>
           <div style={{ borderTopWidth: '1px', borderTopColor: 'var(--card-border)' }} />
@@ -152,11 +149,15 @@ export default function DateSelector() {
               ref={dateInputRef}
               type="date"
               onChange={handleCustomDate}
-              onFocus={() => setIsDateInputFocused(true)}
+              onClick={handleDateInputInteraction}
+              onTouchStart={handleDateInputInteraction}
+              onFocus={() => setDatePickerActive(true)}
               onBlur={() => {
-                setIsDateInputFocused(false);
-                // Close dropdown after a small delay to allow date selection
-                setTimeout(() => setIsOpen(false), 200);
+                // Delay to allow date selection to complete
+                setTimeout(() => {
+                  setDatePickerActive(false);
+                  setIsOpen(false);
+                }, 300);
               }}
               className="w-full px-3 py-2.5 text-base font-medium rounded-lg focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400 outline-none cursor-pointer border"
               style={{ backgroundColor: 'var(--card-bg)', color: 'var(--card-text-primary)', borderColor: 'var(--card-border)' }}
