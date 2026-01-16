@@ -151,13 +151,12 @@ function App() {
                 </span>
                 <button
                   onClick={toggleMilitaryTime}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-ocean-400 focus:ring-offset-2 ${
-                    useMilitaryTime ? 'bg-ocean-500' : 'bg-gray-300 dark:bg-gray-600'
-                  }`}
+                  className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-ocean-400 focus:ring-offset-2"
+                  style={{ backgroundColor: useMilitaryTime ? '#0d9488' : '#9ca3af' }}
                   aria-label="Toggle time format"
                 >
                   <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-md transition-transform ${
                       useMilitaryTime ? 'translate-x-6' : 'translate-x-1'
                     }`}
                   />
