@@ -194,14 +194,14 @@ function App() {
           </div>
         </header>
 
-        {/* Time Input Card */}
-        <div className="relative z-20 rounded-2xl p-5 sm:p-6 mb-4 animate-fade-in-up shadow-md" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)', borderWidth: '1px', borderStyle: 'solid' }}>
+        {/* Time Input Card - compact on mobile */}
+        <div className="relative z-20 rounded-xl sm:rounded-2xl p-3 sm:p-6 mb-3 sm:mb-4 animate-fade-in-up shadow-md" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)', borderWidth: '1px', borderStyle: 'solid' }}>
           <TimezoneInput />
         </div>
 
-        {/* Saved Sets Card */}
+        {/* Saved Sets Card - compact on mobile */}
         {(savedSets.length > 0 || activeTimezones.length >= 2) && (
-          <div className="relative z-10 rounded-2xl p-5 sm:p-6 mb-4 animate-fade-in-up shadow-md" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)', borderWidth: '1px', borderStyle: 'solid' }}>
+          <div className="relative z-10 rounded-xl sm:rounded-2xl p-3 sm:p-6 mb-3 sm:mb-4 animate-fade-in-up shadow-md" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)', borderWidth: '1px', borderStyle: 'solid' }}>
             <SavedSetsPills onNewSet={() => setShowSaveModal(true)} />
           </div>
         )}

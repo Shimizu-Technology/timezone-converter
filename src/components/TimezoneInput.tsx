@@ -120,52 +120,53 @@ export default function TimezoneInput() {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-md" style={{ backgroundColor: '#0d9488' }}>
-          <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <div className="space-y-2 sm:space-y-4">
+      {/* Header - more compact on mobile */}
+      <div className="flex items-center gap-2 sm:gap-3">
+        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center shadow-md" style={{ backgroundColor: '#0d9488' }}>
+          <svg className="w-4 h-4 sm:w-6 sm:h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <label className="font-display text-lg font-bold" style={{ color: 'var(--card-text-primary)' }}>
+        <label className="font-display text-sm sm:text-lg font-bold" style={{ color: 'var(--card-text-primary)' }}>
           What time is it in...
         </label>
       </div>
 
-      {/* Quick time buttons - always shown */}
-      <div className="flex flex-wrap gap-2">
+      {/* Quick time buttons - compact on mobile */}
+      <div className="flex gap-1.5 sm:gap-2">
         <button
           onClick={() => handleQuickTime('09:00')}
-          className="flex-1 min-w-fit px-3 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all shadow-sm whitespace-nowrap border hover:opacity-80 active:scale-95"
+          className="flex-1 px-2 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-sm font-semibold rounded-lg sm:rounded-xl transition-all shadow-sm whitespace-nowrap border hover:opacity-80 active:scale-95"
           style={{ backgroundColor: 'var(--card-bg)', color: 'var(--card-text-primary)', borderColor: 'var(--card-border)' }}
         >
           🌅 9am
         </button>
         <button
           onClick={() => handleQuickTime('12:00')}
-          className="flex-1 min-w-fit px-3 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all shadow-sm whitespace-nowrap border hover:opacity-80 active:scale-95"
+          className="flex-1 px-2 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-sm font-semibold rounded-lg sm:rounded-xl transition-all shadow-sm whitespace-nowrap border hover:opacity-80 active:scale-95"
           style={{ backgroundColor: 'var(--card-bg)', color: 'var(--card-text-primary)', borderColor: 'var(--card-border)' }}
         >
           ☀️ 12pm
         </button>
         <button
           onClick={() => handleQuickTime('17:00')}
-          className="flex-1 min-w-fit px-3 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all shadow-sm whitespace-nowrap border hover:opacity-80 active:scale-95"
+          className="flex-1 px-2 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-sm font-semibold rounded-lg sm:rounded-xl transition-all shadow-sm whitespace-nowrap border hover:opacity-80 active:scale-95"
           style={{ backgroundColor: 'var(--card-bg)', color: 'var(--card-text-primary)', borderColor: 'var(--card-border)' }}
         >
           🌆 5pm
         </button>
         <button
           onClick={handleSetNow}
-          className="flex-1 min-w-fit px-3 py-2 text-xs sm:text-sm font-bold rounded-xl transition-all shadow-sm whitespace-nowrap text-white active:scale-95"
+          className="flex-1 px-2 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-sm font-bold rounded-lg sm:rounded-xl transition-all shadow-sm whitespace-nowrap text-white active:scale-95"
           style={{ backgroundColor: '#0d9488' }}
         >
           ⏱️ Now
         </button>
       </div>
 
-      <div className="flex flex-col gap-3">
-        {/* Time input with clock button */}
+      <div className="flex flex-col gap-2 sm:gap-3">
+        {/* Time input with clock button - compact on mobile */}
         <div className="relative" ref={inputContainerRef}>
           <div className="flex gap-2">
             <div className="relative flex-1">
@@ -175,8 +176,8 @@ export default function TimezoneInput() {
                 onChange={handleTimeChange}
                 onBlur={handleTimeBlur}
                 onFocus={() => setShowTimePicker(false)}
-                placeholder="e.g., 3pm, 15:00"
-                className="w-full h-12 sm:h-14 px-4 text-lg sm:text-xl font-display font-bold rounded-xl focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400 outline-none transition-all shadow-sm border-2 placeholder:text-gray-400"
+                placeholder="e.g., 3pm"
+                className="w-full h-10 sm:h-14 px-3 sm:px-4 text-base sm:text-xl font-display font-bold rounded-lg sm:rounded-xl focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400 outline-none transition-all shadow-sm border-2 placeholder:text-gray-400"
                 style={{ backgroundColor: 'var(--card-bg)', color: 'var(--card-text-primary)', borderColor: 'var(--card-border)' }}
                 aria-label="Time"
                 autoComplete="off"
@@ -184,7 +185,7 @@ export default function TimezoneInput() {
             </div>
             <button
               onClick={() => setShowTimePicker(!showTimePicker)}
-              className="h-12 sm:h-14 px-4 rounded-xl border-2 transition-all shadow-sm hover:shadow-md active:scale-95 flex items-center justify-center"
+              className="h-10 sm:h-14 px-3 sm:px-4 rounded-lg sm:rounded-xl border-2 transition-all shadow-sm hover:shadow-md active:scale-95 flex items-center justify-center"
               style={{ 
                 backgroundColor: showTimePicker ? '#0d9488' : 'var(--card-bg)', 
                 borderColor: showTimePicker ? '#0d9488' : 'var(--card-border)',
@@ -192,7 +193,7 @@ export default function TimezoneInput() {
               }}
               aria-label="Open time picker"
             >
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </button>
@@ -209,8 +210,8 @@ export default function TimezoneInput() {
           )}
           
           {error && (
-            <p className="mt-2 text-xs text-red-600 dark:text-red-400 flex items-center gap-1">
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <p className="mt-1.5 text-xs text-red-600 dark:text-red-400 flex items-center gap-1">
+              <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
               </svg>
               {error}
@@ -218,13 +219,13 @@ export default function TimezoneInput() {
           )}
         </div>
 
-        {/* Date and Timezone row - side by side */}
-        <div className="grid grid-cols-2 gap-3">
+        {/* Date and Timezone row - compact on mobile */}
+        <div className="grid grid-cols-2 gap-2 sm:gap-3">
           <DateSelector />
           <select
             value={sourceTimezone}
             onChange={handleTimezoneChange}
-            className="w-full h-12 sm:h-14 px-3 sm:px-4 text-sm sm:text-base font-display font-semibold rounded-xl focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400 outline-none transition-all shadow-sm cursor-pointer appearance-none border-2"
+            className="w-full h-10 sm:h-14 px-2 sm:px-4 text-xs sm:text-base font-display font-semibold rounded-lg sm:rounded-xl focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400 outline-none transition-all shadow-sm cursor-pointer appearance-none border-2"
             style={{ backgroundColor: 'var(--card-bg)', color: 'var(--card-text-primary)', borderColor: 'var(--card-border)', backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.25em 1.25em', paddingRight: '2rem' }}
             aria-label="Source timezone"
           >
@@ -239,7 +240,8 @@ export default function TimezoneInput() {
         </div>
       </div>
 
-      <p className="text-sm flex items-center gap-2" style={{ color: 'var(--card-text-muted)' }}>
+      {/* Tip text - hidden on mobile */}
+      <p className="hidden sm:flex text-sm items-center gap-2" style={{ color: 'var(--card-text-muted)' }}>
         <span className="inline-flex items-center justify-center w-5 h-5 rounded text-xs" style={{ backgroundColor: 'var(--card-border)' }}>💡</span>
         Type a time like "3pm" or "15:00", or use the clock picker
       </p>

@@ -97,19 +97,19 @@ export default function TimezoneCard({
       />
 
       <div className="p-4 sm:p-5">
-        {/* Remove button - always visible on mobile */}
+        {/* Remove button - positioned on gradient bar, top right */}
         <button
           onClick={() => onRemove(timezoneInfo.id)}
-          className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 rounded-lg transition-all sm:opacity-0 sm:group-hover:opacity-100 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30"
+          className="absolute top-2 right-2 w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center transition-all z-20 bg-white/80 dark:bg-gray-800/80 text-gray-400 dark:text-gray-400 hover:bg-red-500 hover:text-white shadow-sm backdrop-blur-sm"
           aria-label="Remove timezone"
         >
-          <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <svg className="h-2.5 w-2.5 sm:h-3 sm:w-3" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
           </svg>
         </button>
 
-        {/* Mobile: Header with time prominently displayed */}
-        <div className="flex items-start justify-between gap-3 mb-3">
+        {/* Header with time prominently displayed */}
+        <div className="flex items-start justify-between gap-2 mb-3">
           <div className="flex items-center gap-3 min-w-0 flex-1">
             {/* Day/Night icon */}
             <div className={clsx(
@@ -121,7 +121,7 @@ export default function TimezoneCard({
               {timeOfDay.icon}
             </div>
             <div className="min-w-0 flex-1">
-              <h3 className="font-display text-base sm:text-lg font-bold truncate pr-8" style={{ color: 'var(--card-text-primary)' }}>
+              <h3 className="font-display text-base sm:text-lg font-bold truncate" style={{ color: 'var(--card-text-primary)' }}>
                 {timezoneInfo.displayName}
               </h3>
               <p className="text-xs sm:text-sm" style={{ color: 'var(--card-text-muted)' }}>
@@ -130,7 +130,7 @@ export default function TimezoneCard({
             </div>
           </div>
           
-          {/* Time - prominent on right */}
+          {/* Time display */}
           <div className="text-right flex-shrink-0">
             <div className="font-display text-2xl sm:text-4xl font-bold tracking-tight" style={{ color: 'var(--card-text-primary)' }}>
               {time}

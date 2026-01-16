@@ -80,16 +80,16 @@ export default function DateSelector() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full h-12 sm:h-14 px-3 sm:px-4 text-sm sm:text-base font-display font-semibold rounded-xl outline-none transition-all shadow-sm flex items-center justify-between border-2 hover:border-ocean-400 focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400 active:scale-[0.98]"
+        className="w-full h-10 sm:h-14 px-2 sm:px-4 text-xs sm:text-base font-display font-semibold rounded-lg sm:rounded-xl outline-none transition-all shadow-sm flex items-center justify-between border-2 hover:border-ocean-400 focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400 active:scale-[0.98]"
         style={{ backgroundColor: 'var(--card-bg)', color: 'var(--card-text-primary)', borderColor: 'var(--card-border)' }}
         aria-label="Select date"
       >
-        <div className="flex items-center gap-2 min-w-0">
-          <span className="text-base">📅</span>
+        <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+          <span className="text-sm sm:text-base">📅</span>
           <span className="truncate">{getDisplayText()}</span>
         </div>
         <svg
-          className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+          className={`w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
           style={{ color: 'var(--card-text-muted)' }}
           fill="none"
           viewBox="0 0 24 24"
