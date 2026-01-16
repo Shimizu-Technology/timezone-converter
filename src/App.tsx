@@ -186,20 +186,20 @@ function App() {
         </header>
 
         {/* Time Input Card */}
-        <div className="rounded-2xl p-5 sm:p-6 mb-4 animate-fade-in-up shadow-md" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)', borderWidth: '1px', borderStyle: 'solid' }}>
+        <div className="relative z-20 rounded-2xl p-5 sm:p-6 mb-4 animate-fade-in-up shadow-md" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)', borderWidth: '1px', borderStyle: 'solid' }}>
           <TimezoneInput />
         </div>
 
         {/* Saved Sets Card */}
         {(savedSets.length > 0 || activeTimezones.length >= 2) && (
-          <div className="rounded-2xl p-5 sm:p-6 mb-4 animate-fade-in-up shadow-md" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)', borderWidth: '1px', borderStyle: 'solid' }}>
+          <div className="relative z-10 rounded-2xl p-5 sm:p-6 mb-4 animate-fade-in-up shadow-md" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)', borderWidth: '1px', borderStyle: 'solid' }}>
             <SavedSetsPills onNewSet={() => setShowSaveModal(true)} />
           </div>
         )}
 
         {/* Converted Timezones Section */}
         {convertedTimezones.length > 0 ? (
-          <div className="space-y-3">
+          <div className="relative z-0 space-y-3">
             {convertedTimezones.map((converted, index) => (
               <div
                 key={converted.timezoneInfo.id}
