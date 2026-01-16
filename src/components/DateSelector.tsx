@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useTimezoneStore } from '../store/timezoneStore';
 
 export default function DateSelector() {
   const { sourceDate, setSourceDate } = useTimezoneStore();
   const [isOpen, setIsOpen] = useState(false);
+  const ignoreNextChangeRef = useRef(false);
 
   // NO outside click handler - just close when selection is made or Cancel is tapped
   // This is the most reliable approach for iOS native date picker
@@ -55,10 +56,28 @@ export default function DateSelector() {
 
   const handleCustomDate = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+    
+    // iOS fires onChange immediately when picker opens - ignore that first event
+    if (ignoreNextChangeRef.current) {
+      ignoreNextChangeRef.current = false;
+      return;
+    }
+    
     if (value) {
       setSourceDate(value);
       setIsOpen(false);
     }
+  };
+  
+  const handleDateInputFocus = () => {
+    // When the input is focused (picker opens), ignore the next onChange
+    // because iOS immediately fires onChange with the default value
+    ignoreNextChangeRef.current = true;
+    
+    // Reset the flag after a short delay in case onChange doesn't fire
+    setTimeout(() => {
+      ignoreNextChangeRef.current = false;
+    }, 500);
   };
 
   return (
@@ -123,6 +142,7 @@ export default function DateSelector() {
             <input
               type="date"
               onChange={handleCustomDate}
+              onFocus={handleDateInputFocus}
               className="w-full px-3 py-2.5 text-base font-medium rounded-lg focus:ring-2 focus:ring-ocean-400 focus:border-ocean-400 outline-none cursor-pointer border"
               style={{ backgroundColor: 'var(--card-bg)', color: 'var(--card-text-primary)', borderColor: 'var(--card-border)' }}
             />
