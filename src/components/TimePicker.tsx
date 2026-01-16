@@ -206,12 +206,11 @@ export default function TimePicker({ value, onChange, useMilitaryTime, onClose }
                 onClick={() => {
                   if (isPM) handlePeriodToggle();
                 }}
-                className={`px-3 py-2 text-sm font-bold rounded-lg transition-all ${
-                  !isPM 
-                    ? 'bg-ocean-500 text-white shadow-md' 
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-700'
-                }`}
-                style={isPM ? { color: 'var(--card-text-muted)' } : undefined}
+                className="px-3 py-2 text-sm font-bold rounded-lg transition-all shadow-md"
+                style={!isPM 
+                  ? { backgroundColor: '#0d9488', color: 'white' } 
+                  : { backgroundColor: 'var(--card-border)', color: 'var(--card-text-muted)' }
+                }
               >
                 AM
               </button>
@@ -219,12 +218,11 @@ export default function TimePicker({ value, onChange, useMilitaryTime, onClose }
                 onClick={() => {
                   if (!isPM) handlePeriodToggle();
                 }}
-                className={`px-3 py-2 text-sm font-bold rounded-lg transition-all ${
-                  isPM 
-                    ? 'bg-ocean-500 text-white shadow-md' 
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-700'
-                }`}
-                style={!isPM ? { color: 'var(--card-text-muted)' } : undefined}
+                className="px-3 py-2 text-sm font-bold rounded-lg transition-all shadow-md"
+                style={isPM 
+                  ? { backgroundColor: '#0d9488', color: 'white' } 
+                  : { backgroundColor: 'var(--card-border)', color: 'var(--card-text-muted)' }
+                }
               >
                 PM
               </button>
@@ -240,15 +238,11 @@ export default function TimePicker({ value, onChange, useMilitaryTime, onClose }
               <button
                 key={min}
                 onClick={() => handleMinuteChange(min)}
-                className={`px-3 py-1.5 text-sm font-semibold rounded-lg transition-all ${
-                  selectedMinute === min 
-                    ? 'bg-ocean-500 text-white shadow-md' 
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-700'
-                }`}
-                style={selectedMinute !== min ? { 
-                  backgroundColor: 'var(--card-border)', 
-                  color: 'var(--card-text-primary)' 
-                } : undefined}
+                className="px-3 py-1.5 text-sm font-semibold rounded-lg transition-all shadow-sm"
+                style={selectedMinute === min 
+                  ? { backgroundColor: '#0d9488', color: 'white' } 
+                  : { backgroundColor: 'var(--card-border)', color: 'var(--card-text-primary)' }
+                }
               >
                 :{min.toString().padStart(2, '0')}
               </button>
