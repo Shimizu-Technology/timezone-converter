@@ -9,12 +9,35 @@ interface TimezoneCardProps {
   isCurrent?: boolean;
 }
 
+/**
+ * Get human-readable label for day difference
+ */
+function getDayDifferenceLabel(dayDifference: number): { label: string; emoji: string } | null {
+  if (dayDifference === 0) return null;
+  
+  switch (dayDifference) {
+    case -2:
+      return { label: '2 days ago', emoji: '⏪' };
+    case -1:
+      return { label: 'Yesterday', emoji: '◀️' };
+    case 1:
+      return { label: 'Tomorrow', emoji: '▶️' };
+    case 2:
+      return { label: 'In 2 days', emoji: '⏩' };
+    default:
+      if (dayDifference < -2) {
+        return { label: `${Math.abs(dayDifference)} days ago`, emoji: '⏪' };
+      }
+      return { label: `In ${dayDifference} days`, emoji: '⏩' };
+  }
+}
+
 export default function TimezoneCard({
   convertedTime,
   onRemove,
   isCurrent = false
 }: TimezoneCardProps) {
-  const { timezoneInfo, time, date, isDifferentDay, hoursDifference, isBusinessHours, iso } = convertedTime;
+  const { timezoneInfo, time, date, isDifferentDay, dayDifference, hoursDifference, isBusinessHours, iso } = convertedTime;
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -153,11 +176,21 @@ export default function TimezoneCard({
           {/* Date info */}
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-xs sm:text-sm" style={{ color: 'var(--card-text-muted)' }}>{date}</span>
-            {isDifferentDay && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-bold bg-coral-500 text-white shadow-sm">
-                {targetDateTime > DateTime.now() ? 'Next day' : 'Prev day'}
-              </span>
-            )}
+            {isDifferentDay && (() => {
+              const dayLabel = getDayDifferenceLabel(dayDifference);
+              if (!dayLabel) return null;
+              return (
+                <span className={clsx(
+                  'inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-bold shadow-sm',
+                  dayDifference > 0 
+                    ? 'bg-coral-500 text-white' 
+                    : 'bg-indigo-500 text-white'
+                )}>
+                  <span className="text-[10px]">{dayLabel.emoji}</span>
+                  {dayLabel.label}
+                </span>
+              );
+            })()}
           </div>
         </div>
 

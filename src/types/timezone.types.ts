@@ -39,6 +39,7 @@ export interface ConvertedTime {
   time: string;                  // Converted time (e.g., "3:00 PM")
   date: string;                  // Full date (e.g., "Wed, Jan 12, 2026")
   isDifferentDay: boolean;       // True if date changed during conversion
+  dayDifference: number;         // Days difference from source (-2, -1, 0, 1, 2, etc.)
   iso: string;                   // ISO 8601 string for the converted time
   hoursDifference: number;       // Hours difference from source (e.g., -5, +14)
   isBusinessHours: boolean;      // True if time is during business hours (9am-5pm)
