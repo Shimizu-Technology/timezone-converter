@@ -11,6 +11,7 @@ import SavedSetsPills from './components/SavedSetsPills';
 import SaveSetModal from './components/SaveSetModal';
 import MeetingTimeFinder from './components/MeetingTimeFinder';
 import WaveLogo from './components/WaveLogo';
+import TimeOfDayLegend from './components/TimeOfDayLegend';
 
 function App() {
   const { sourceTime, sourceTimezone, sourceDate, activeTimezones, removeTimezone, useMilitaryTime, toggleMilitaryTime, setSourceTime, setSourceTimezone, setSourceDate, addTimezone, setActiveTimezones, savedSets } = useTimezoneStore();
@@ -228,6 +229,11 @@ function App() {
                 />
               </div>
             ))}
+            
+            {/* Time of Day Legend */}
+            <div className="mt-4 pt-3 border-t" style={{ borderColor: 'var(--card-border)' }}>
+              <TimeOfDayLegend />
+            </div>
           </div>
         ) : activeTimezones.length === 0 ? (
           /* Empty State */
