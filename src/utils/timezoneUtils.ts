@@ -238,3 +238,74 @@ export function formatTimezoneOffset(timezone: string): string {
   const sign = offset >= 0 ? '+' : '-';
   return `GMT${sign}${hours}${minutes > 0 ? `:${minutes.toString().padStart(2, '0')}` : ''}`;
 }
+
+/**
+ * Check if a DST transition occurs between two dates for a timezone
+ * Returns info about the DST change if one occurs
+ */
+export function checkDSTTransition(
+  timezone: string,
+  fromDate: DateTime,
+  toDate: DateTime
+): { hasDSTChange: boolean; direction: 'forward' | 'back' | null; changeDate: string | null } {
+  const fromOffset = fromDate.setZone(timezone).offset;
+  const toOffset = toDate.setZone(timezone).offset;
+  
+  if (fromOffset === toOffset) {
+    return { hasDSTChange: false, direction: null, changeDate: null };
+  }
+  
+  // Find approximately when the change occurs
+  let searchStart = fromDate;
+  let searchEnd = toDate;
+  
+  // Binary search to find the day of the change
+  while (searchEnd.diff(searchStart, 'days').days > 1) {
+    const mid = searchStart.plus({ days: Math.floor(searchEnd.diff(searchStart, 'days').days / 2) });
+    const midOffset = mid.setZone(timezone).offset;
+    
+    if (midOffset === fromOffset) {
+      searchStart = mid;
+    } else {
+      searchEnd = mid;
+    }
+  }
+  
+  const direction = toOffset > fromOffset ? 'forward' : 'back';
+  const changeDate = searchEnd.setZone(timezone).toFormat('MMM d, yyyy');
+  
+  return { hasDSTChange: true, direction, changeDate };
+}
+
+/**
+ * Get DST alerts for all timezones between now and a target date
+ */
+export function getDSTAlerts(
+  timezones: string[],
+  targetDate: string | null // ISO date string or null for today
+): Array<{ timezone: string; displayName: string; direction: 'forward' | 'back'; changeDate: string }> {
+  const now = DateTime.now();
+  const target = targetDate ? DateTime.fromISO(targetDate) : now;
+  
+  // Only check if the target date is different from today
+  if (Math.abs(target.diff(now, 'days').days) < 1) {
+    return [];
+  }
+  
+  const alerts: Array<{ timezone: string; displayName: string; direction: 'forward' | 'back'; changeDate: string }> = [];
+  
+  for (const tz of timezones) {
+    const result = checkDSTTransition(tz, now, target);
+    if (result.hasDSTChange && result.direction && result.changeDate) {
+      const tzInfo = getTimezoneInfo(tz);
+      alerts.push({
+        timezone: tz,
+        displayName: tzInfo.displayName,
+        direction: result.direction,
+        changeDate: result.changeDate
+      });
+    }
+  }
+  
+  return alerts;
+}
