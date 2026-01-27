@@ -1,16 +1,51 @@
 import { useTimezoneStore } from '../store/timezoneStore';
 import { useState } from 'react';
+import { getTimezoneInfo } from '../utils/timezoneUtils';
 
 interface SavedSetsPillsProps {
   onNewSet: () => void;
 }
 
+// Preset timezone groups
+const TIMEZONE_PRESETS = [
+  {
+    id: 'us-coasts',
+    name: 'US Coasts',
+    emoji: '🇺🇸',
+    timezones: ['America/New_York', 'America/Los_Angeles']
+  },
+  {
+    id: 'europe',
+    name: 'Europe',
+    emoji: '🇪🇺',
+    timezones: ['Europe/London', 'Europe/Paris', 'Europe/Berlin']
+  },
+  {
+    id: 'asia-pacific',
+    name: 'Asia-Pacific',
+    emoji: '🌏',
+    timezones: ['Asia/Tokyo', 'Asia/Singapore', 'Australia/Sydney']
+  },
+  {
+    id: 'global',
+    name: 'Global',
+    emoji: '🌐',
+    timezones: ['America/New_York', 'Europe/London', 'Asia/Tokyo']
+  }
+];
+
 export default function SavedSetsPills({ onNewSet }: SavedSetsPillsProps) {
-  const { savedSets, loadSet, deleteSet } = useTimezoneStore();
+  const { savedSets, loadSet, deleteSet, setActiveTimezones } = useTimezoneStore();
   const [deletingSetId, setDeletingSetId] = useState<string | null>(null);
 
   const handleLoadSet = (setId: string) => {
     loadSet(setId);
+  };
+
+  const handleLoadPreset = (preset: typeof TIMEZONE_PRESETS[0]) => {
+    // Clear existing and add preset timezones
+    const timezoneInfos = preset.timezones.map(tz => getTimezoneInfo(tz));
+    setActiveTimezones(timezoneInfos);
   };
 
   const handleDeleteSet = (setId: string, event: React.MouseEvent) => {
@@ -22,48 +57,101 @@ export default function SavedSetsPills({ onNewSet }: SavedSetsPillsProps) {
 
   if (savedSets.length === 0) {
     return (
-      <div className="flex items-center gap-3 flex-wrap">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-            <span className="text-lg">📁</span>
+      <div className="space-y-4">
+        {/* Quick Presets */}
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--card-text-muted)' }}>Quick Presets</span>
           </div>
-          <span className="text-sm font-semibold" style={{ color: 'var(--card-text-secondary)' }}>No saved sets yet</span>
+          <div className="flex flex-wrap gap-2">
+            {TIMEZONE_PRESETS.map((preset) => (
+              <button
+                key={preset.id}
+                onClick={() => handleLoadPreset(preset)}
+                className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-semibold rounded-xl border-2 transition-all hover:shadow-md"
+                style={{ 
+                  backgroundColor: 'var(--card-bg)', 
+                  borderColor: 'var(--card-border)',
+                  color: 'var(--card-text-primary)'
+                }}
+              >
+                <span>{preset.emoji}</span>
+                {preset.name}
+              </button>
+            ))}
+          </div>
         </div>
-        <button
-          onClick={onNewSet}
-          className="inline-flex items-center px-4 py-2.5 text-sm font-bold rounded-xl transition-all text-white shadow-md hover:shadow-lg"
-          style={{ backgroundColor: '#0d9488' }}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 mr-2"
-            viewBox="0 0 20 20"
-            fill="currentColor"
+        
+        {/* Save Set Prompt */}
+        <div className="flex items-center gap-3 flex-wrap pt-2 border-t" style={{ borderColor: 'var(--card-border)' }}>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+              <span className="text-lg">📁</span>
+            </div>
+            <span className="text-sm font-semibold" style={{ color: 'var(--card-text-secondary)' }}>No saved sets yet</span>
+          </div>
+          <button
+            onClick={onNewSet}
+            className="inline-flex items-center px-4 py-2.5 text-sm font-bold rounded-xl transition-all text-white shadow-md hover:shadow-lg"
+            style={{ backgroundColor: '#0d9488' }}
           >
-            <path
-              fillRule="evenodd"
-              d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-              clipRule="evenodd"
-            />
-          </svg>
-          Create First Set
-        </button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4 mr-2"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                clipRule="evenodd"
+              />
+            </svg>
+            Create First Set
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-2">
-        <div className="w-8 h-8 rounded-lg bg-coral-100 dark:bg-coral-900/40 flex items-center justify-center">
-          <span className="text-lg">📁</span>
+    <div className="space-y-4">
+      {/* Quick Presets */}
+      <div>
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--card-text-muted)' }}>Quick Presets</span>
         </div>
-        <label className="text-sm font-semibold text-gray-700 dark:text-gray-200">
-          Saved Sets
-        </label>
+        <div className="flex flex-wrap gap-2">
+          {TIMEZONE_PRESETS.map((preset) => (
+            <button
+              key={preset.id}
+              onClick={() => handleLoadPreset(preset)}
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-semibold rounded-xl border-2 transition-all hover:shadow-md"
+              style={{ 
+                backgroundColor: 'var(--card-bg)', 
+                borderColor: 'var(--card-border)',
+                color: 'var(--card-text-primary)'
+              }}
+            >
+              <span>{preset.emoji}</span>
+              {preset.name}
+            </button>
+          ))}
+        </div>
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      {/* Saved Sets */}
+      <div className="pt-3 border-t" style={{ borderColor: 'var(--card-border)' }}>
+        <div className="flex items-center gap-2 mb-2">
+          <div className="w-6 h-6 rounded-lg bg-coral-100 dark:bg-coral-900/40 flex items-center justify-center">
+            <span className="text-sm">📁</span>
+          </div>
+          <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--card-text-muted)' }}>
+            Saved Sets
+          </label>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
         {savedSets.map((set) => (
           <div
             key={set.id}
@@ -124,6 +212,7 @@ export default function SavedSetsPills({ onNewSet }: SavedSetsPillsProps) {
           </svg>
           New Set
         </button>
+        </div>
       </div>
     </div>
   );
