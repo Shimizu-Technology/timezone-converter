@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { DateTime } from 'luxon';
 import { TimezoneInfo } from '../types/timezone.types';
 import { getTimezoneInfo } from '../utils/timezoneUtils';
+import { copyToClipboard } from '../utils/urlState';
 import clsx from 'clsx';
 
 interface MeetingTimeFinderProps {
@@ -24,6 +25,7 @@ export default function MeetingTimeFinder({
   // Business hours customization
   const [businessHoursStart, setBusinessHoursStart] = useState(9);
   const [businessHoursEnd, setBusinessHoursEnd] = useState(17);
+  const [copySuccess, setCopySuccess] = useState(false);
 
   // Get proper source timezone info
   const sourceTimezoneInfo = getTimezoneInfo(sourceTimezone);
@@ -102,6 +104,47 @@ export default function MeetingTimeFinder({
     const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
     const meridiem = hour < 12 ? 'AM' : 'PM';
     return `${hour12}:00 ${meridiem}`;
+  };
+
+  // Generate formatted meeting times for copying
+  const generateMeetingTimesSummary = () => {
+    if (meetingWindows.length === 0) return '';
+
+    let summary = `📅 Meeting Time Options\n`;
+    summary += `━━━━━━━━━━━━━━━━━━━━━\n\n`;
+    
+    meetingWindows.forEach((window, index) => {
+      summary += `Option ${index + 1}: ${formatHour(window.start)} – ${formatHour(window.end + 1)} (${sourceTimezoneInfo.abbreviation})\n`;
+      
+      // Show converted times for each timezone
+      allTimezones.forEach((tz) => {
+        const startTime = DateTime.now()
+          .setZone(sourceTimezone)
+          .set({ hour: window.start, minute: 0 })
+          .setZone(tz.timezone);
+        const endTime = DateTime.now()
+          .setZone(sourceTimezone)
+          .set({ hour: window.end + 1, minute: 0 })
+          .setZone(tz.timezone);
+        
+        const startStr = useMilitaryTime ? startTime.toFormat('HH:mm') : startTime.toFormat('h:mm a');
+        const endStr = useMilitaryTime ? endTime.toFormat('HH:mm') : endTime.toFormat('h:mm a');
+        
+        summary += `  • ${tz.displayName}: ${startStr} – ${endStr}\n`;
+      });
+      summary += '\n';
+    });
+    
+    return summary.trim();
+  };
+
+  const handleCopyMeetingTimes = async () => {
+    const summary = generateMeetingTimesSummary();
+    const success = await copyToClipboard(summary);
+    if (success) {
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    }
   };
 
   if (targetTimezones.length === 0) {
@@ -203,6 +246,31 @@ export default function MeetingTimeFinder({
               Consider asynchronous communication or flexible meeting times
             </p>
           </div>
+        )}
+        
+        {/* Copy Meeting Times Button */}
+        {meetingWindows.length > 0 && (
+          <button
+            onClick={handleCopyMeetingTimes}
+            className="mt-4 w-full flex items-center justify-center gap-2 py-3 px-4 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-all active:scale-[0.98] shadow-md hover:shadow-lg"
+          >
+            {copySuccess ? (
+              <>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+                Copied!
+              </>
+            ) : (
+              <>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                  <path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd" />
+                </svg>
+                Copy Meeting Times
+              </>
+            )}
+          </button>
         )}
       </div>
 
