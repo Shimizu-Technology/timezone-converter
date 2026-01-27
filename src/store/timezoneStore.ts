@@ -9,6 +9,9 @@ interface TimezoneState {
   sourceDate: string | null; // ISO date string or null for "today"
   activeTimezones: TimezoneInfo[];
 
+  // Recent timezones (last 5 used)
+  recentTimezones: string[];
+
   // Saved sets
   savedSets: TimezoneSet[];
 
@@ -50,8 +53,15 @@ const initialState = {
   sourceTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/New_York',
   sourceDate: null, // null means "today"
   activeTimezones: [],
+  recentTimezones: [] as string[],
   savedSets: [],
   useMilitaryTime: false
+};
+
+// Helper to add timezone to recent list (keeps last 5, no duplicates)
+const addToRecent = (current: string[], timezone: string): string[] => {
+  const filtered = current.filter(tz => tz !== timezone);
+  return [timezone, ...filtered].slice(0, 5);
 };
 
 export const useTimezoneStore = create<TimezoneState>()(
@@ -84,7 +94,8 @@ export const useTimezoneStore = create<TimezoneState>()(
           }
 
           return {
-            activeTimezones: [...state.activeTimezones, timezone]
+            activeTimezones: [...state.activeTimezones, timezone],
+            recentTimezones: addToRecent(state.recentTimezones, timezone.timezone)
           };
         }),
 
