@@ -25,9 +25,11 @@ export default function SourceTimezoneCard({
       const parsed = parseTime(sourceTime);
       const [hours, minutes] = parsed.time.split(':').map(Number);
     
-    // Create DateTime in source timezone
-    const baseDate = sourceDate ? DateTime.fromISO(sourceDate) : DateTime.now();
-    const dt = baseDate.set({ hour: hours, minute: minutes }).setZone(sourceTimezone);
+    // Create DateTime in source timezone (interpret date in target zone, not system zone)
+    const baseDate = sourceDate 
+      ? DateTime.fromISO(sourceDate, { zone: sourceTimezone })
+      : DateTime.now().setZone(sourceTimezone);
+    const dt = baseDate.set({ hour: hours, minute: minutes });
     
     // Format time
     const timeFormat = useMilitaryTime ? 'HH:mm' : 'h:mm a';
@@ -50,8 +52,8 @@ export default function SourceTimezoneCard({
       return { icon: '🌙', label: 'Night' };
     };
 
-    // Calculate progress through the day
-    const dayProgress = (hour / 24) * 100;
+    // Calculate progress through the day (include minutes for smooth movement)
+    const dayProgress = ((hour * 60 + minutes) / 1440) * 100;
 
     return {
       time: formattedTime,
