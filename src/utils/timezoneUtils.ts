@@ -149,6 +149,12 @@ export function convertTime(
                            sourceDateTime.month !== targetDateTime.month ||
                            sourceDateTime.year !== targetDateTime.year;
 
+    // Calculate day difference (target date - source date)
+    // Using startOf('day') to compare just the dates, not times
+    const sourceDateOnly = sourceDateTime.startOf('day');
+    const targetDateOnly = targetDateTime.startOf('day');
+    const dayDifference = Math.round(targetDateOnly.diff(sourceDateOnly, 'days').days);
+
     // Calculate hours difference
     const sourceOffset = sourceDateTime.offset;
     const targetOffset = targetDateTime.offset;
@@ -163,6 +169,7 @@ export function convertTime(
       time: formatTime(targetDateTime, useMilitaryTime),
       date: targetDateTime.toFormat('EEE, MMM d, yyyy'),
       isDifferentDay,
+      dayDifference,
       iso: targetDateTime.toISO() || '',
       hoursDifference,
       isBusinessHours
@@ -201,6 +208,7 @@ export function getCurrentTimeInTimezone(timezone: string): ConvertedTime {
     time: now.toFormat('h:mm a'),
     date: now.toFormat('EEE, MMM d, yyyy'),
     isDifferentDay: false,
+    dayDifference: 0,
     iso: now.toISO() || '',
     hoursDifference: 0, // No conversion, so difference is 0
     isBusinessHours
