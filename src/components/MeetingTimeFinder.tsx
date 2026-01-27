@@ -166,6 +166,18 @@ export default function MeetingTimeFinder({
         </div>
       </div>
 
+      {/* Source Timezone Reference */}
+      <div className="p-4 rounded-xl border-2 border-ocean-300 dark:border-ocean-600 bg-ocean-50 dark:bg-ocean-900/30">
+        <div className="flex items-center gap-3">
+          <span className="w-10 h-10 rounded-xl bg-ocean-500 flex items-center justify-center text-xl text-white shadow-md">📍</span>
+          <div>
+            <p className="text-xs font-semibold text-ocean-600 dark:text-ocean-400 uppercase tracking-wide">Reference Timezone</p>
+            <p className="font-display text-lg font-bold text-ocean-900 dark:text-ocean-100">{sourceTimezoneInfo.displayName}</p>
+          </div>
+        </div>
+        <p className="mt-2 text-xs text-ocean-700 dark:text-ocean-300">All times below are shown relative to this timezone</p>
+      </div>
+
       {/* Meeting Windows Summary */}
       <div>
         <h3 className="font-display text-lg font-bold mb-4 flex items-center gap-2" style={{ color: 'var(--card-text-primary)' }}>
@@ -184,10 +196,10 @@ export default function MeetingTimeFinder({
                 </div>
                 <div className="flex-1">
                   <p className="font-display text-xl font-bold text-emerald-900 dark:text-emerald-100">
-                    {formatHour(window.start)} – {formatHour(window.end + 1)}
+                    {formatHour(window.start)} – {formatHour(window.end + 1)} <span className="text-sm font-normal text-emerald-700 dark:text-emerald-300">({sourceTimezoneInfo.abbreviation})</span>
                   </p>
                   <p className="text-sm text-emerald-700 dark:text-emerald-300">
-                    {window.end - window.start + 1} hour{window.end - window.start > 0 ? 's' : ''} in {allTimezones[0].displayName}
+                    {window.end - window.start + 1} hour{window.end - window.start > 0 ? 's' : ''} overlap across all timezones
                   </p>
                 </div>
               </div>
