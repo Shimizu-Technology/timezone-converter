@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useTimezoneStore } from './store/timezoneStore';
 import { useThemeStore, applyTheme } from './store/themeStore';
 import { convertTime, getTimezoneInfo } from './utils/timezoneUtils';
@@ -48,6 +48,21 @@ function App() {
       });
     }
   }, []);
+
+  // Track if we've synced URL at least once (to allow clearing URL when removing all timezones)
+  const hasUrlSyncedRef = useRef(false);
+
+  // Update URL when state changes (for shareable links)
+  useEffect(() => {
+    // Skip only on initial mount when empty (don't overwrite URL we're reading from)
+    // But allow subsequent updates even when empty (user removed all timezones)
+    if (activeTimezones.length === 0 && !hasUrlSyncedRef.current) return;
+
+    hasUrlSyncedRef.current = true;
+    const url = encodeStateToUrl(sourceTime, sourceTimezone, activeTimezones, sourceDate);
+    // Use replaceState to avoid polluting browser history
+    window.history.replaceState(null, '', url);
+  }, [sourceTime, sourceTimezone, sourceDate, activeTimezones]);
 
   // Handle share/copy URL
   const handleCopyUrl = async () => {
