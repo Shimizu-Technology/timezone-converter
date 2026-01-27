@@ -278,7 +278,9 @@ export function checkDSTTransition(
 }
 
 /**
- * Get DST alerts for all timezones between now and a target date
+ * Get DST alerts for all timezones between now and a target date.
+ * Note: Only detects the first DST transition in the date range.
+ * For spans covering multiple transitions (e.g., a full year), only the initial one is reported.
  */
 export function getDSTAlerts(
   timezones: string[],
@@ -287,14 +289,19 @@ export function getDSTAlerts(
   const now = DateTime.now();
   const target = targetDate ? DateTime.fromISO(targetDate) : now;
   
-  // Only check if the target date is different from today
-  if (Math.abs(target.diff(now, 'days').days) < 1) {
+  // Only check if the target date is in the future (at least 1 day ahead)
+  if (target.diff(now, 'days').days < 1) {
     return [];
   }
   
   const alerts: Array<{ timezone: string; displayName: string; direction: 'forward' | 'back'; changeDate: string }> = [];
+  const seen = new Set<string>();
   
   for (const tz of timezones) {
+    // Skip duplicates
+    if (seen.has(tz)) continue;
+    seen.add(tz);
+    
     const result = checkDSTTransition(tz, now, target);
     if (result.hasDSTChange && result.direction && result.changeDate) {
       const tzInfo = getTimezoneInfo(tz);
