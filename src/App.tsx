@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useTimezoneStore } from './store/timezoneStore';
 import { useThemeStore, applyTheme } from './store/themeStore';
-import { convertTime, getTimezoneInfo } from './utils/timezoneUtils';
+import { convertTime, getTimezoneInfo, getDSTAlerts } from './utils/timezoneUtils';
 import { decodeStateFromUrl, encodeStateToUrl, copyToClipboard } from './utils/urlState';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import TimezoneInput from './components/TimezoneInput';
@@ -123,6 +123,13 @@ function App() {
     }
   }, [sourceTime, sourceTimezone, sourceDate, activeTimezones, useMilitaryTime]);
 
+  // Check for DST changes between now and selected date
+  const dstAlerts = useMemo(() => {
+    if (!sourceDate) return [];
+    const allTimezones = [sourceTimezone, ...activeTimezones.map(tz => tz.timezone)];
+    return getDSTAlerts(allTimezones, sourceDate);
+  }, [sourceTimezone, activeTimezones, sourceDate]);
+
   const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
   return (
@@ -204,6 +211,34 @@ function App() {
         {(savedSets.length > 0 || activeTimezones.length >= 2) && (
           <div className="relative z-10 rounded-xl sm:rounded-2xl p-3 sm:p-6 mb-3 sm:mb-4 animate-fade-in-up shadow-md" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)', borderWidth: '1px', borderStyle: 'solid' }}>
             <SavedSetsPills onNewSet={() => setShowSaveModal(true)} />
+          </div>
+        )}
+
+        {/* DST Alert Banner */}
+        {dstAlerts.length > 0 && (
+          <div className="mb-3 sm:mb-4 p-3 sm:p-4 rounded-xl bg-amber-50 dark:bg-amber-900/30 border-2 border-amber-300 dark:border-amber-600 animate-fade-in">
+            <div className="flex items-start gap-3">
+              <span className="text-2xl flex-shrink-0">⚠️</span>
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-amber-900 dark:text-amber-100 text-sm sm:text-base mb-1">
+                  Daylight Saving Time Changes
+                </p>
+                <p className="text-xs sm:text-sm text-amber-700 dark:text-amber-300 mb-2">
+                  The following timezones have DST transitions between now and your selected date:
+                </p>
+                <div className="space-y-1">
+                  {dstAlerts.map((alert, i) => (
+                    <div key={i} className="text-xs sm:text-sm text-amber-800 dark:text-amber-200 flex items-center gap-2">
+                      <span className="font-medium">{alert.displayName}</span>
+                      <span className="text-amber-600 dark:text-amber-400">•</span>
+                      <span>
+                        Clocks {alert.direction === 'forward' ? 'spring forward ⏩' : 'fall back ⏪'} on {alert.changeDate}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
