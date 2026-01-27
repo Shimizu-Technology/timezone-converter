@@ -297,7 +297,8 @@ function App() {
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
               <button
                 onClick={() => setShowPicker(true)}
-                className="flex-1 btn-primary py-3.5 sm:py-3 text-sm sm:text-base active:scale-[0.98]"
+                className="flex-1 btn-primary py-3.5 sm:py-3 text-sm sm:text-base active:scale-[0.98] group relative"
+                title="Add Timezone (⌘K)"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -312,12 +313,14 @@ function App() {
                   />
                 </svg>
                 Add Timezone
+                <span className="hidden sm:inline-flex ml-2 text-xs opacity-60 bg-white/20 px-1.5 py-0.5 rounded">⌘K</span>
               </button>
 
               <div className="flex gap-2 sm:gap-3">
                 <button
                   onClick={handleCopyUrl}
                   className="flex-1 btn-secondary py-3.5 sm:py-3 text-sm sm:text-base active:scale-[0.98]"
+                  title="Copy shareable link (⌘L)"
                 >
                   {copySuccess ? (
                     <>
@@ -347,6 +350,7 @@ function App() {
                         <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
                       </svg>
                       Share
+                      <span className="hidden sm:inline-flex ml-1 text-xs opacity-60">⌘L</span>
                     </>
                   )}
                 </button>
@@ -375,8 +379,10 @@ function App() {
                 <button
                   onClick={() => setShowSaveModal(true)}
                   className="px-4 py-3 text-sm font-semibold text-coral-700 dark:text-coral-300 bg-coral-50 dark:bg-coral-900/30 border border-coral-200 dark:border-coral-700 rounded-xl hover:bg-coral-100 dark:hover:bg-coral-900/50 hover:shadow-md transition-all"
+                  title="Save current timezones as a set (⌘S)"
                 >
                   Save Set
+                  <span className="hidden sm:inline-flex ml-2 text-xs opacity-60">⌘S</span>
                 </button>
               )}
             </div>
