@@ -104,6 +104,37 @@ export default function MeetingTimeFinder({
     return `${hour12}:00 ${meridiem}`;
   };
 
+  // Generate Google Calendar URL for a meeting window
+  const generateCalendarUrl = (window: { start: number; end: number }) => {
+    const today = DateTime.now().setZone(sourceTimezone);
+    const startDateTime = today.set({ hour: window.start, minute: 0, second: 0 });
+    const endDateTime = today.set({ hour: window.end + 1, minute: 0, second: 0 });
+    
+    // Format for Google Calendar (YYYYMMDDTHHMMSS)
+    const formatForGCal = (dt: DateTime) => dt.toUTC().toFormat("yyyyMMdd'T'HHmmss'Z'");
+    
+    // Build description with all timezone conversions
+    let description = 'Meeting times across timezones:\n\n';
+    allTimezones.forEach((tz) => {
+      const startLocal = startDateTime.setZone(tz.timezone);
+      const endLocal = endDateTime.setZone(tz.timezone);
+      const startStr = useMilitaryTime ? startLocal.toFormat('HH:mm') : startLocal.toFormat('h:mm a');
+      const endStr = useMilitaryTime ? endLocal.toFormat('HH:mm') : endLocal.toFormat('h:mm a');
+      description += `• ${tz.displayName}: ${startStr} – ${endStr}\n`;
+    });
+    description += '\nCreated with Hafa Timezones';
+    
+    const params = new URLSearchParams({
+      action: 'TEMPLATE',
+      text: 'Meeting',
+      dates: `${formatForGCal(startDateTime)}/${formatForGCal(endDateTime)}`,
+      details: description,
+      ctz: sourceTimezone
+    });
+    
+    return `https://calendar.google.com/calendar/render?${params.toString()}`;
+  };
+
   if (targetTimezones.length === 0) {
     return (
       <div className="text-center py-12">
@@ -190,6 +221,19 @@ export default function MeetingTimeFinder({
                     {window.end - window.start + 1} hour{window.end - window.start > 0 ? 's' : ''} in {allTimezones[0].displayName}
                   </p>
                 </div>
+                <a
+                  href={generateCalendarUrl(window)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 px-3 py-2 bg-white dark:bg-gray-700 text-emerald-700 dark:text-emerald-300 text-sm font-semibold rounded-lg border border-emerald-300 dark:border-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/50 transition-colors"
+                  title="Add to Google Calendar"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
+                  </svg>
+                  <span className="hidden sm:inline">Add to Calendar</span>
+                  <span className="sm:hidden">📅</span>
+                </a>
               </div>
             ))}
           </div>
