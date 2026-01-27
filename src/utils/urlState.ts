@@ -77,9 +77,11 @@ export function generateTimeSummary(
 ): string {
   // Format the header line with source time
   const sourceTzName = sourceTimezone.split('/').pop()?.replace(/_/g, ' ') || sourceTimezone;
-  const dateStr = sourceDate 
-    ? new Date(sourceDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
-    : new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  let parsedDate = sourceDate ? new Date(sourceDate) : new Date();
+  if (isNaN(parsedDate.getTime())) {
+    parsedDate = new Date(); // Fallback to today if invalid
+  }
+  const dateStr = parsedDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
   
   let summary = `Meeting: ${dateStr}, ${sourceTime} ${sourceTzName}\n`;
   
