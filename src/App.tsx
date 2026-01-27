@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { useTimezoneStore } from './store/timezoneStore';
 import { useThemeStore, applyTheme } from './store/themeStore';
 import { convertTime, getTimezoneInfo } from './utils/timezoneUtils';
-import { decodeStateFromUrl, encodeStateToUrl, copyToClipboard } from './utils/urlState';
+import { decodeStateFromUrl, encodeStateToUrl, copyToClipboard, generateTimeSummary } from './utils/urlState';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import TimezoneInput from './components/TimezoneInput';
 import TimezoneCard from './components/TimezoneCard';
@@ -19,6 +19,7 @@ function App() {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showMeetingFinder, setShowMeetingFinder] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [copySummarySuccess, setCopySummarySuccess] = useState(false);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
   // Apply theme whenever it changes
@@ -57,6 +58,24 @@ function App() {
     if (success) {
       setCopySuccess(true);
       setTimeout(() => setCopySuccess(false), 2000);
+    }
+  };
+
+  // Handle copy formatted time summary
+  const handleCopySummary = async () => {
+    if (convertedTimezones.length === 0) return;
+    
+    const summary = generateTimeSummary(
+      sourceTime,
+      sourceTimezone,
+      sourceDate,
+      convertedTimezones
+    );
+    const success = await copyToClipboard(summary);
+
+    if (success) {
+      setCopySummarySuccess(true);
+      setTimeout(() => setCopySummarySuccess(false), 2000);
     }
   };
 
@@ -315,9 +334,49 @@ function App() {
               </button>
 
               <div className="flex gap-2 sm:gap-3">
+                {/* Copy Summary button */}
+                <button
+                  onClick={handleCopySummary}
+                  className="flex-1 btn-secondary py-3.5 sm:py-3 text-sm sm:text-base active:scale-[0.98]"
+                  title="Copy formatted time summary for messaging"
+                >
+                  {copySummarySuccess ? (
+                    <>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5 mr-2 text-ocean-500"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      <span className="text-ocean-600 dark:text-ocean-400">Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5 mr-2"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                        <path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd" />
+                      </svg>
+                      <span className="hidden xs:inline">Copy </span>Summary
+                    </>
+                  )}
+                </button>
+
+                {/* Share URL button */}
                 <button
                   onClick={handleCopyUrl}
                   className="flex-1 btn-secondary py-3.5 sm:py-3 text-sm sm:text-base active:scale-[0.98]"
+                  title="Copy shareable URL"
                 >
                   {copySuccess ? (
                     <>
@@ -346,7 +405,7 @@ function App() {
                         <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
                         <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
                       </svg>
-                      Share
+                      <span className="hidden xs:inline">Share </span>URL
                     </>
                   )}
                 </button>
