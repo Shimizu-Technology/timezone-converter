@@ -49,6 +49,16 @@ function App() {
     }
   }, []);
 
+  // Update URL when state changes (for shareable links)
+  useEffect(() => {
+    // Skip if no timezones added yet (initial state)
+    if (activeTimezones.length === 0) return;
+
+    const url = encodeStateToUrl(sourceTime, sourceTimezone, activeTimezones, sourceDate);
+    // Use replaceState to avoid polluting browser history
+    window.history.replaceState(null, '', url);
+  }, [sourceTime, sourceTimezone, sourceDate, activeTimezones]);
+
   // Handle share/copy URL
   const handleCopyUrl = async () => {
     const url = encodeStateToUrl(sourceTime, sourceTimezone, activeTimezones, sourceDate);
