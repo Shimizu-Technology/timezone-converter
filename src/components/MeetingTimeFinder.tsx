@@ -233,8 +233,8 @@ export default function MeetingTimeFinder({
               <div className="space-y-1">
                 {allTimezones.map((tz) => (
                   <div key={tz.timezone} className="flex justify-between items-center gap-2">
-                    <span className="truncate text-xs" style={{ color: 'var(--card-text-muted)' }}>
-                      {tz.displayName.split(' ')[0]}
+                    <span className="truncate text-xs min-w-0 flex-1" style={{ color: 'var(--card-text-muted)' }}>
+                      {tz.displayName.replace(/\s*\([^)]*\)$/, '')}
                     </span>
                     <span className={clsx(
                       'font-mono text-xs px-1.5 py-0.5 rounded font-semibold',
