@@ -6,6 +6,7 @@ import { decodeStateFromUrl, encodeStateToUrl, copyToClipboard } from './utils/u
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import TimezoneInput from './components/TimezoneInput';
 import TimezoneCard from './components/TimezoneCard';
+import SourceTimezoneCard from './components/SourceTimezoneCard';
 import TimezonePicker from './components/TimezonePicker';
 import SavedSetsPills from './components/SavedSetsPills';
 import SaveSetModal from './components/SaveSetModal';
@@ -210,6 +211,16 @@ function App() {
         {/* Converted Timezones Section */}
         {convertedTimezones.length > 0 ? (
           <div className="relative z-0 space-y-3">
+            {/* Source Timezone Reference Card */}
+            <div className="animate-fade-in-up">
+              <SourceTimezoneCard
+                sourceTime={sourceTime}
+                sourceTimezone={sourceTimezone}
+                sourceDate={sourceDate}
+                useMilitaryTime={useMilitaryTime}
+              />
+            </div>
+            
             {convertedTimezones.map((converted, index) => (
               <div
                 key={converted.timezoneInfo.id}
