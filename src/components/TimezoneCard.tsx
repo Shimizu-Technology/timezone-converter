@@ -39,11 +39,13 @@ export default function TimezoneCard({
   };
 
   const getTimeOfDayInfo = () => {
-    if (isMorning) return { icon: '🌅', label: 'Morning' };
-    if (isAfternoon) return { icon: '☀️', label: 'Afternoon' };
-    if (isEvening) return { icon: '🌆', label: 'Evening' };
-    return { icon: '🌙', label: 'Night' };
+    if (isMorning) return { icon: '🌅', label: 'Morning', borderColor: '#f59e0b' }; // amber
+    if (isAfternoon) return { icon: '☀️', label: 'Afternoon', borderColor: '#22c55e' }; // green
+    if (isEvening) return { icon: '🌆', label: 'Evening', borderColor: '#f97316' }; // orange
+    return { icon: '🌙', label: 'Night', borderColor: '#6366f1' }; // indigo
   };
+
+  const timeOfDay = getTimeOfDayInfo();
 
   const getBusinessHoursStatus = () => {
     if (isBusinessHours) {
@@ -70,7 +72,6 @@ export default function TimezoneCard({
     };
   };
 
-  const timeOfDay = getTimeOfDayInfo();
   const businessStatus = getBusinessHoursStatus();
 
   // Calculate progress through the day (for visual indicator)
@@ -84,16 +85,12 @@ export default function TimezoneCard({
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4',
         isCurrent && 'ring-2 ring-ocean-400'
       )}
-      style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)', borderWidth: '1px', borderStyle: 'solid' }}
+      style={{ backgroundColor: 'var(--card-bg)', borderColor: timeOfDay.borderColor, borderWidth: '2px', borderStyle: 'solid' }}
     >
-      {/* Day/Night gradient indicator */}
+      {/* Time of day indicator strip */}
       <div 
-        className={clsx(
-          'h-1.5',
-          isDaytime 
-            ? 'bg-gradient-to-r from-amber-400 via-orange-400 to-amber-400'
-            : 'bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500'
-        )}
+        className="h-1"
+        style={{ backgroundColor: timeOfDay.borderColor }}
       />
 
       <div className="p-4 sm:p-5">
