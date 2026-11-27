@@ -15,6 +15,7 @@ export const isAnalyticsEnabled =
   (import.meta.env.PROD || ENABLE_IN_DEV);
 
 const SENSITIVE_PARAMS = new Set(['token', 'code', 'state', 'auth', 'email', 'jwt', 'key', 'secret']);
+const NESTED_URL_KEYS = new Set(['href', 'url', 'name']);
 
 export function sanitizeAnalyticsUrl(rawUrl: string): string {
   try {
@@ -32,9 +33,33 @@ export function sanitizeAnalyticsUrl(rawUrl: string): string {
   }
 }
 
+function sanitizeNestedReplayValue(value: unknown, key?: string): unknown {
+  if (typeof value === 'string') {
+    if (
+      key &&
+      NESTED_URL_KEYS.has(key) &&
+      (value.startsWith('http://') || value.startsWith('https://') || value.startsWith('/'))
+    ) {
+      return sanitizeAnalyticsUrl(value);
+    }
+    return value;
+  }
+  if (Array.isArray(value)) {
+    return value.map((item) => sanitizeNestedReplayValue(item));
+  }
+  if (value && typeof value === 'object') {
+    const copy: Record<string, unknown> = {};
+    for (const [childKey, childValue] of Object.entries(value as Record<string, unknown>)) {
+      copy[childKey] = sanitizeNestedReplayValue(childValue, childKey);
+    }
+    return copy;
+  }
+  return value;
+}
+
 export function sanitizeAnalyticsEvent(event: CaptureResult | null): CaptureResult | null {
   if (!event?.properties) return event;
-  const props = event.properties;
+  const props = { ...event.properties };
   for (const key of [
     '$current_url',
     '$referrer',
@@ -47,7 +72,18 @@ export function sanitizeAnalyticsEvent(event: CaptureResult | null): CaptureResu
       props[key] = sanitizeAnalyticsUrl(props[key] as string);
     }
   }
-  return event;
+  if ('$snapshot_data' in props && props.$snapshot_data) {
+    props.$snapshot_data = sanitizeNestedReplayValue(props.$snapshot_data);
+  }
+  return { ...event, properties: props };
+}
+
+export function maskReplayNetworkRequest<T extends { name?: string }>(request: T): T {
+  if (!request?.name) return request;
+  return {
+    ...request,
+    name: sanitizeAnalyticsUrl(request.name),
+  };
 }
 
 let posthogPromise: Promise<PostHogClient | null> | null = null;
@@ -63,12 +99,15 @@ function getPostHog(): Promise<PostHogClient | null> {
         posthog.init(POSTHOG_KEY, {
           api_host: POSTHOG_HOST,
           person_profiles: 'identified_only',
-          capture_pageview: true,
+          capture_pageview: 'history_change',
           capture_pageleave: true,
           autocapture: true,
           disable_session_recording: false,
           session_recording: {
             maskAllInputs: true,
+            recordHeaders: false,
+            recordBody: false,
+            maskCapturedNetworkRequestFn: maskReplayNetworkRequest,
           },
           before_send: sanitizeAnalyticsEvent,
         });
