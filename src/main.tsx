@@ -3,6 +3,9 @@ import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 import { useThemeStore, applyTheme } from './store/themeStore'
+import { initAnalytics } from './lib/analytics'
+
+initAnalytics();
 
 // Force remove dark class first, then apply correct theme
 document.documentElement.classList.remove('dark');
